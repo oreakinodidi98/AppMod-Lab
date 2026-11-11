@@ -65,9 +65,6 @@ Check with the customer that:
 
 * The selected region supports AKS Automatic and the chosen PostgreSQL tier and SKU.
 * The subscription has sufficient quota, resource-provider registration, and budget.
-* A public AKS API and a PostgreSQL public endpoint restricted to the workshop's public IPv4 addresses are allowed for this temporary lab.
-* Any managed ingress or Gateway resources provisioned by AKS Automatic are permitted and included in the cost and cleanup review. This lab does not route the application through them.
-* You know your workstation or corporate network's public outbound IPv4 address. A private workstation address is not sufficient.
 * You can reach the Kubernetes API and PostgreSQL from your workstation and access the registry and package sources required by ACR builds.
 * You understand which monitoring workspaces AKS may create or reuse, who owns them, and whether their costs and resource groups are approved.
 * Browser requests for the sample's external fonts and inventory images are allowed by your organization's policy.

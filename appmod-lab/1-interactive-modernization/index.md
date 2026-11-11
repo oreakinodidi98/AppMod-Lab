@@ -1,11 +1,11 @@
 ---
-title: Module 01 - Modernize Java interactively
+title: Module 01 - Modernize interactively
 has_children: true
 nav_order: 2
 ---
 
-Establish a baseline for the [todo application](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/src), review an upgrade plan, and validate the changes in your application fork.
+Run the [todo application](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/src), ask Copilot to assess it, review the upgrade plan, and check that the app still works after the upgrade.
 
 ## Exercise
 
-[Baseline, upgrade, and validate]({% link appmod-lab/1-interactive-modernization/interactive-modernization-1-1-upgrade.md %})
+[Assess, Plan, Upgrade, and Validate]({% link appmod-lab/1-interactive-modernization/interactive-modernization-1-1-upgrade.md %})
