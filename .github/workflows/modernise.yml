@@ -55,7 +55,7 @@ jobs:
 # fetch-depth: 0 gives full Git history.
 # persist-credentials: false prevents the default checkout token from being saved in Git config, because the workflow later uses the custom PAT for pushing.
       - name: Check out default branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
@@ -68,7 +68,7 @@ jobs:
 # Install multiple Java versions. 
 # Giving the Modernize CLI and project build tooling access to several Java versions, useful when upgrading from older Java versions or testing compatibility.
       - name: Install JDKs and configure Maven toolchains
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: |
@@ -194,7 +194,7 @@ jobs:
 # Uploads the Modernize CLI logs and the recovery bundle as artifacts.
       - name: Upload Modernize CLI logs and recovery bundle
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: modernize-logs-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
