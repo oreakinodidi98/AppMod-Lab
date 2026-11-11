@@ -2,19 +2,22 @@
 title: Module 04 - Deploy the Python application
 description: Build the Python Caldova API and web application and verify them on AKS.
 ms.topic: tutorial
+nav_order: 5
+has_children: true
 ---
 
 ## Goals
 
 Deploy the existing Python implementation to the environment from
-[module 03](./03-azure-environment.md). Verify that the application uses the
+[module 03](../3-azure-environment/). Verify that the application uses the
 seeded PostgreSQL database through Microsoft Entra Workload ID.
 
 ## 1. Understand the application
 
-Review the [Python API](../Python_app/CaldovaClinicalApi/main.py), the
-[web application](../Python_app/CaldovaClinicalWeb/caldova_home.py), and the
-[database seed](../Python_app/CaldovaClinicalApi/db/init.sql).
+Review the Python API (`Python_app/CaldovaClinicalApi/main.py`), the web
+application (`Python_app/CaldovaClinicalWeb/caldova_home.py`), and the database
+seed (`Python_app/CaldovaClinicalApi/db/init.sql`). These source files are not
+included in this checkout.
 
 Trace a request from the browser to the web application, the `/materials` API, and
 PostgreSQL. Find the separate liveness and database-readiness endpoints. Identify
@@ -37,7 +40,7 @@ $env:LAB_API_REPOSITORY = "$($env:LAB_PREFIX)/python-api"
 $env:LAB_WEB_REPOSITORY = "$($env:LAB_PREFIX)/python-web"
 ```
 
-Follow the [shared build and deployment exercise](./deploy-caldova.md), then return
+Follow the [shared build and deployment exercise](deploy-caldova/), then return
 here. It builds both images in your registry, deploys them to your namespace, and
 checks the actual database-backed inventory. The Python web application caches
 inventory responses for up to 30 seconds.
@@ -63,5 +66,5 @@ Both Python pods are ready, `/health` reports a connected database, `/materials`
 returns all six seeded lots, and the web page displays the inventory. You can explain
 which identity connects to PostgreSQL and why readiness is separate from liveness.
 
-[Next: Caldova Java](./05-java-application.md) |
-[Workshop home](./README.md)
+[Next: Caldova Java](../5-java-application/) |
+[Workshop home](../../index.md)

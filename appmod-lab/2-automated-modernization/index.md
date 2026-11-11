@@ -2,6 +2,7 @@
 title: Module 02 - Automate a modernization run
 description: Run and review the repository's Java modernization workflow in a disposable fork.
 ms.topic: tutorial
+nav_order: 3
 ---
 
 ## Goals
@@ -19,7 +20,7 @@ Do not enable these unchanged workflows or run them against a customer account.
 1. In your **disposable fork**, open **Settings > Actions > General** and disable
    GitHub Actions for the repository before editing workflows or adding secrets.
    If you cannot do this, stop and ask the facilitator for an approved isolated run.
-2. On the fork's default branch, inspect [the workflow directory](../.github/workflows/).
+2. On the fork's default branch, inspect [the workflow directory](https://github.com/oreakinodidi98/AppMod-Lab/tree/main/.github/workflows).
    In the fork only, remove or move all workflow files out of `.github/workflows`
    except `ci.yml` and `modernise.yml`. This includes the deployment, signing,
    issue-to-project, and optional Copilot setup workflows. Do not edit the original
@@ -91,5 +92,5 @@ You can explain the actual automation trigger, source branch, plan-approval
 limitation, CI result, and human review gate. A failed or skipped run is a learning
 result to investigate, not a successful modernization.
 
-[Next: create the Azure environment](./03-azure-environment.md) |
-[Workshop home](./README.md)
+[Next: create the Azure environment](../3-azure-environment/) |
+[Workshop home](../../index.md)

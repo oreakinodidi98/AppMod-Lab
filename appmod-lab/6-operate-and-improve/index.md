@@ -2,14 +2,15 @@
 title: Module 06 - Operate and improve
 description: Inspect Caldova health and practice a human-reviewed operational feedback loop.
 ms.topic: tutorial
+nav_order: 7
 ---
 
 ## Goals
 
 Observe the deployed application, practice a bounded recovery exercise, and turn an
 operational signal into a proposed engineering action. This module requires a
-successful deployment from [module 04](./04-python-application.md) or
-[module 05](./05-java-application.md).
+successful deployment from [module 04](../4-python-application/) or
+[module 05](../5-java-application/).
 
 ## 1. Inspect the workload
 
@@ -82,10 +83,10 @@ capacity and resilience decisions.
 
 ## 3. Turn a signal into reviewed work
 
-Use the [post-production diagram](../Agentic_SDLC/images/image-1.png) to discuss a
-possible operating model. Its telemetry, bug-hunter, and incident-response agents
-are conceptual; they are not installed or authorized by this workshop. Kubernetes
-replacing a pod is a controller action, not an AI agent remediation.
+Discuss a possible operating model for turning an operational signal into reviewed
+work. The telemetry, bug-hunter, and incident-response agents are conceptual; they
+are not installed or authorized by this workshop. Kubernetes replacing a pod is a
+controller action, not an AI agent remediation.
 
 In pairs, choose one observed or hypothetical signal, such as repeated database
 readiness failures. Write a short handoff with:
@@ -105,5 +106,5 @@ You can distinguish process liveness, database readiness, and user-visible behav
 describe the pod-replacement result; and present a human-triaged follow-up without
 claiming the conceptual agents were deployed.
 
-[Next: clean up](./07-cleanup.md) |
-[Workshop home](./README.md)
+[Next: clean up](../7-cleanup/) |
+[Workshop home](../../index.md)

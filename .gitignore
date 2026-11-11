@@ -97,3 +97,11 @@ terraform.rc
 **/k8s-Copy/*
 
 .envrc
+
+# Jekyll
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+.bundle/
+vendor/

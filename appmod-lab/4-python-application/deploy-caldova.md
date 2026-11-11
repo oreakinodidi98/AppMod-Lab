@@ -2,13 +2,15 @@
 title: Build and deploy Caldova
 description: Build participant-specific images, deploy them on AKS, and verify database-backed behavior.
 ms.topic: tutorial
+parent: Module 04 - Deploy the Python application
+nav_order: 1
 ---
 
 ## Before you start
 
-Complete [module 03](./03-azure-environment.md) and select the Python or Java
-contexts in [module 04](./04-python-application.md) or
-[module 05](./05-java-application.md). Use the same PowerShell terminal and keep
+Complete [module 03](../3-azure-environment/) and select the Python or Java
+contexts in [module 04](./) or
+[module 05](../5-java-application/). Use the same PowerShell terminal and keep
 your lab settings available. The commands operate only on your dedicated resource
 group, registry, cluster, and namespace.
 
@@ -77,7 +79,7 @@ kubectl create configmap $env:LAB_CONFIG_NAME --namespace $env:LAB_NAMESPACE `
     --dry-run=client --output yaml |
     kubectl apply --namespace $env:LAB_NAMESPACE --filename -
 
-$templatePath = Join-Path $env:LAB_REPO 'workshop\k8s\caldova.yaml'
+$templatePath = Join-Path $env:LAB_REPO 'assets\k8s\caldova.yaml'
 $manifest = Get-Content -LiteralPath $templatePath -Raw
 $values = @{
     '__API_NAME__' = $env:LAB_API_NAME
@@ -203,5 +205,5 @@ page's HTTP response as an end-to-end success.
 ## Return to your module
 
 Keep the main terminal open so the inventory response remains available for
-comparison. Return to [Python](./04-python-application.md#3-record-the-comparison-baseline)
-or [Java](./05-java-application.md#3-compare-behavior).
+comparison. Return to [Python](./#3-record-the-comparison-baseline)
+or [Java](../5-java-application/#3-compare-behavior).

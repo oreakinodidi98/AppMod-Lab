@@ -2,6 +2,8 @@
 title: Module 00 - Prepare for the workshop
 description: Check the tools, permissions, network access, and safety boundaries for the workshop.
 ms.topic: tutorial
+parent: Prerequisites
+nav_order: 1
 ---
 
 ## Goals
@@ -12,7 +14,7 @@ Prepare a disposable GitHub fork and the access needed to provision a temporary 
 
 You need:
 
-* A GitHub account with GitHub Copilot enabled and permission to create a disposable fork. The automated exercise also needs GitHub Actions and the token permissions described in [module 02](./02-automated-modernization.md).
+* A GitHub account with GitHub Copilot enabled and permission to create a disposable fork. The automated exercise also needs GitHub Actions and the token permissions described in [module 02](../2-automated-modernization/).
 * Visual Studio Code with GitHub Copilot and the [GitHub Copilot modernization extension](https://marketplace.visualstudio.com/items?itemName=vscjava.migrate-java-to-azure).
 * A Windows workstation with Git, PowerShell 7.4 or later, Maven 3, a Java 8 JDK, and the JDK for your chosen upgrade target. Install JDK 17 as well for the Caldova Java exercise.
 * Azure CLI 2.86.0 or later, `kubectl`, `kubelogin`, `psql`, and `tar` available on your command path.
@@ -79,7 +81,7 @@ policies. AKS, database, registry, networking, and build usage are billable.
 1. Fork the repository into an account or organization where you have permission to run the workshop. Use a disposable fork, not a production repository.
 2. Clone your fork with Git or GitHub Desktop. Open the repository root in Visual Studio Code.
 3. Keep the fork's default branch as the baseline for the automated exercise. Do interactive upgrade work on a separate branch.
-4. Before enabling workflows, review the safety steps in [module 02](./02-automated-modernization.md). Several existing deployment workflows target a different demonstration environment.
+4. Before enabling workflows, review the safety steps in [module 02](../2-automated-modernization/). Several existing deployment workflows target a different demonstration environment.
 
 In PowerShell, set the path to your clone. Keep this terminal open for the workshop;
 the lab settings are session variables and are not written to the repository.
@@ -106,5 +108,5 @@ You can identify your fork, selected subscription, resource owner, approved regi
 network design, and cleanup owner. You have the tools and permissions for the modules
 you will run.
 
-[Next: interactive modernization](./01-interactive-modernization.md) |
-[Workshop home](./README.md)
+[Next: interactive modernization](../1-interactive-modernization/) |
+[Workshop home](../../index.md)

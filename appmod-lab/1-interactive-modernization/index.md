@@ -2,15 +2,15 @@
 title: Module 01 - Modernize Java interactively
 description: Establish a Java baseline and review an interactive GitHub Copilot modernization plan.
 ms.topic: tutorial
+nav_order: 2
 ---
 
 ## Goals
 
-Run the existing todo application, identify what must remain true, and use an
-interactive modernization plan to make a bounded change. This module uses the
-separate [`src`](../src/) application, not the Java version of Caldova.
-
-![Interactive and automated inputs to an agent-assisted delivery flow](../Agentic_SDLC/images/image.png)
+Run the todo application, identify what must remain true, and use an interactive
+modernization plan to make a bounded change. This module uses the separate `src/`
+application, not the Java version of Caldova. That source folder is not included in
+this checkout.
 
 The image presents an intended operating model. In this repository, the automated
 workflow in the next module does not have the same plan-approval gate as the
@@ -18,7 +18,7 @@ interactive path.
 
 ## 1. Establish the baseline
 
-The current [`pom.xml`](../src/pom.xml) declares Java 8 and Spring Boot 2.7.18.
+The expected `src/pom.xml` declares Java 8 and Spring Boot 2.7.18.
 The application is a server-rendered todo list using an embedded H2 database.
 
 From your repository root, select your installed JDK 8 directory and run the same
@@ -109,5 +109,5 @@ You have a recorded baseline, an explicitly approved target and plan, a reviewab
 change, and test and behavior results. If the upgrade did not complete, identify
 the blocker and retain the evidence instead of reporting success.
 
-[Next: automated modernization](./02-automated-modernization.md) |
-[Workshop home](./README.md)
+[Next: automated modernization](../2-automated-modernization/) |
+[Workshop home](../../index.md)

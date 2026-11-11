@@ -2,6 +2,7 @@
 title: Module 03 - Create the Azure environment
 description: Provision a disposable AKS, ACR, PostgreSQL, and workload identity environment using participant-selected settings.
 ms.topic: tutorial
+nav_order: 4
 ---
 
 ## Goals
@@ -14,7 +15,7 @@ the same database without a stored database password.
 > [!WARNING]
 > These steps create billable resources and make role assignments. Use only a
 > subscription, region, network design, and budget approved for this workshop.
-> Do not use an existing resource group: [cleanup](./07-cleanup.md) deletes the
+> Do not use an existing resource group: [cleanup](../7-cleanup/) deletes the
 > entire group and everything in it.
 
 The lab uses AKS Automatic's managed networking, a public AKS API, and a public
@@ -27,7 +28,7 @@ and access controls with the platform team before creating the cluster.
 
 ## 1. Select the subscription and lab settings
 
-Use the PowerShell terminal from [module 00](./00-prerequisites.md). The following
+Use the PowerShell terminal from [module 00](../0-prerequisites/prerequisite-0-1-technical/). The following
 setting makes native-command failures stop subsequent PowerShell commands:
 
 ```powershell
@@ -259,7 +260,7 @@ if (-not $env:LAB_PG_HOST) { throw 'Could not resolve the PostgreSQL host.' }
 
 If creation fails, inspect the Azure error and the partially created resources.
 Do not assume the command rolled them back. Use the same resource group for
-[cleanup](./07-cleanup.md) when appropriate.
+[cleanup](../7-cleanup/) when appropriate.
 
 ### Allow the cluster's outbound addresses
 
@@ -442,5 +443,5 @@ that cluster, a seeded PostgreSQL database, and a service account federated with
 managed identity. The next module builds and deploys an application to verify the
 end-to-end connection.
 
-[Next: Caldova Python](./04-python-application.md) |
-[Workshop home](./README.md)
+[Next: Caldova Python](../4-python-application/) |
+[Workshop home](../../index.md)

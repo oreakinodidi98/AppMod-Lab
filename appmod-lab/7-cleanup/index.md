@@ -2,6 +2,7 @@
 title: Module 07 - Clean up the workshop
 description: Remove the dedicated Azure resource group, temporary files, and workshop credentials.
 ms.topic: tutorial
+nav_order: 8
 ---
 
 ## Goals
@@ -144,5 +145,5 @@ The resource group and its managed resources are gone, or a named owner has acce
 the remaining deletion work. Port forwards are stopped, local lab files are removed,
 and demonstration automation and credentials are disabled or revoked.
 
-[Workshop home](./README.md) |
-[Facilitator guide](./FACILITATOR.md)
+[Workshop home](../../index.md) |
+[Facilitator guide](../facilitator-guide/)

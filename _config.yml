@@ -1,0 +1,32 @@
+title: Application Modernization Lab
+description: A facilitator-led workshop for modernizing applications with GitHub Copilot and operating them on Azure Kubernetes Service.
+remote_theme: pmarsceill/just-the-docs
+plugins:
+  - jekyll-remote-theme
+
+search_enabled: true
+permalink: pretty
+back_to_top: true
+back_to_top_text: Back to top
+
+gh_edit_link: true
+gh_edit_link_text: Edit this page on GitHub.
+gh_edit_repository: https://github.com/oreakinodidi98/AppMod-Lab
+gh_edit_branch: main
+gh_edit_view_mode: tree
+
+aux_links:
+  AppMod-Lab on GitHub:
+    - https://github.com/oreakinodidi98/AppMod-Lab
+aux_links_new_tab: true
+
+exclude:
+  - README.md
+  - AGENTS.md
+  - CLAUDE.md
+  - CONTRIBUTING.md
+  - MAINTAINERS.md
+  - SECURITY.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor/

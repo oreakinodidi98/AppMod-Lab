@@ -2,13 +2,14 @@
 title: Facilitator guide
 description: Prepare and deliver the application modernization workshop to customers.
 ms.topic: how-to
+nav_order: 9
 ---
 
 ## Prepare before the session
 
 Meet the customer ahead of time to agree on the application story, participant
 experience, approved subscription and region, spending limit, resource ownership,
-and deletion time. Review the [prerequisites](./00-prerequisites.md) together.
+and deletion time. Review the [prerequisites](0-prerequisites/) together.
 
 * Confirm that each participant or pair can create a **new dedicated** resource group, AKS Automatic cluster, ACR, PostgreSQL flexible server, and managed identity, and can create the required registry and cluster role assignments.
 * Check regional availability, quota, provider registration, organization policies, network egress, and access to public container and package registries.
@@ -35,17 +36,15 @@ the customer's cost controls; do not promise a fixed workshop cost.
 
 ## Talking points and gates
 
-Use the [interactive and automated flow diagram](../Agentic_SDLC/images/image.png)
-to introduce the two paths. The diagram shows an intended common operating model.
-In the workflow actually checked into this repository, the interactive path can
+Use modules [01](1-interactive-modernization/) and
+[02](2-automated-modernization/) to introduce the two paths. The interactive path can
 include plan approval, but the unattended CLI run has **no human plan-approval
 gate**. Its human gate is review of the resulting pull request. Neither path proves
 that a change is safe solely because an agent or build reports success.
 
-Use the [post-production diagram](../Agentic_SDLC/images/image-1.png) for the final
-discussion. The bug-hunter, telemetry, and incident-response agents are conceptual
-roles; the workshop does not deploy them, grant them production access, or perform
-autonomous remediation.
+For the final discussion, emphasize that the bug-hunter, telemetry, and
+incident-response agents are conceptual roles; the workshop does not deploy them,
+grant them production access, or perform autonomous remediation.
 
 At each checkpoint, ask participants to show observable evidence: the baseline test
 result, the target and plan, workflow status, healthy pods, API response, and the
@@ -55,8 +54,8 @@ human decision on a proposed follow-up.
 
 * If a participant cannot obtain GitHub Actions or token permissions, have them review a facilitator-owned run that was prepared and approved beforehand. Explain that they did not execute the automation themselves.
 * If Azure quota, policy, permissions, or region availability blocks provisioning, pause the Azure exercises. Use a previously approved facilitator environment for a demonstration, and record that the participant did not provision their own resources.
-* If PostgreSQL or workload identity is unavailable, inspect the failure in [the deployment exercise](./deploy-caldova.md). Do not switch to synthetic data or disable readiness checks without explaining the behavior change.
+* If PostgreSQL or workload identity is unavailable, inspect the failure in [the deployment exercise](4-python-application/deploy-caldova/). Do not switch to synthetic data or disable readiness checks without explaining the behavior change.
 * If an image build or upgrade takes longer than planned, continue with the architecture and review discussion while it runs, then return to the result.
-* If resources must be retained, name an owner and a deletion time. Ensure the owner has the values and access needed to finish [cleanup](./07-cleanup.md).
+* If resources must be retained, name an owner and a deletion time. Ensure the owner has the values and access needed to finish [cleanup](7-cleanup/).
 
-[Back to the workshop](./README.md)
+[Back to the workshop](../index.md)

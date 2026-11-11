@@ -2,20 +2,22 @@
 title: Module 05 - Deploy the Java application
 description: Test and deploy the Java Caldova implementation against the same PostgreSQL database.
 ms.topic: tutorial
+nav_order: 6
 ---
 
 ## Goals
 
 Build and deploy the Spring Boot implementation using the same API contract,
 PostgreSQL database, and workload identity as the Python implementation. You can
-complete this module after [module 03](./03-azure-environment.md) without running
+complete this module after [module 03](../3-azure-environment/) without running
 Python first, but the comparison is more useful if you complete both.
 
 ## 1. Inspect and test the Java implementation
 
-Review the [Java API](../Java_app/CaldovaClinicalApiJava/src/main/java/com/caldova/clinicalapi/inventory/InventoryController.java),
-its [database configuration](../Java_app/CaldovaClinicalApiJava/src/main/java/com/caldova/clinicalapi/config/EntraPostgresConfiguration.java),
-and the [web application](../Java_app/CaldovaClinicalWebJava/src/main/java/com/caldova/clinicalweb/inventory/InventoryPageController.java).
+Review the Java API (`Java_app/CaldovaClinicalApiJava/src/main/java/com/caldova/clinicalapi/inventory/InventoryController.java`),
+its database configuration (`Java_app/CaldovaClinicalApiJava/src/main/java/com/caldova/clinicalapi/config/EntraPostgresConfiguration.java`),
+and the web application (`Java_app/CaldovaClinicalWebJava/src/main/java/com/caldova/clinicalweb/inventory/InventoryPageController.java`).
+These source files are not included in this checkout.
 Compare their responsibilities with the Python files from module 04.
 
 Ask Copilot to identify the shared API contract, differences in database
@@ -53,7 +55,7 @@ $env:LAB_WEB_REPOSITORY = "$($env:LAB_PREFIX)/java-web"
 ```
 
 If the Python port forwards are still running, stop them with Ctrl+C. Follow the
-[shared build and deployment exercise](./deploy-caldova.md) again, then return
+[shared build and deployment exercise](../4-python-application/deploy-caldova/) again, then return
 here. The same Kubernetes deployments are updated to the Java images, and the
 existing database and identity remain in place. Reopen the port forwards for the
 new pods as described in that exercise.
@@ -95,5 +97,5 @@ The Java tests pass, both Java pods are ready, and the API and web application s
 the seeded database inventory. If you ran both modules, you have compared their
 responses and can identify the evidence you would need for a production migration.
 
-[Next: operate and improve](./06-operate-and-improve.md) |
-[Workshop home](./README.md)
+[Next: operate and improve](../6-operate-and-improve/) |
+[Workshop home](../../index.md)
