@@ -27,7 +27,7 @@ jobs:
     steps:
 # Checks out the source code
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 # Reads java.version from src/pom.xml (1.8 -> 8) so CI matches the Java version of the branch being built, including modernised branches
       - name: Detect Java version from pom.xml
         id: java
@@ -38,7 +38,7 @@ jobs:
           echo "Using Java ${version:-8}"
 # Install the Temurin JDK detected from the pom
       - name: Set up Temurin ${{ steps.java.outputs.version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: ${{ steps.java.outputs.version }}
