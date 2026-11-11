@@ -1,5 +1,5 @@
 title: Application Modernization Lab
-description: A facilitator-led workshop for modernizing applications with GitHub Copilot and operating them on Azure Kubernetes Service.
+description: A workshop for modernizing applications with GitHub Copilot and operating them on Azure Kubernetes Service.
 remote_theme: pmarsceill/just-the-docs
 plugins:
   - jekyll-remote-theme
