@@ -1,0 +1,86 @@
+name: Build and Sign Image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Java_app/**'
+      - 'Python_app/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'Java_app/**'
+      - 'Python_app/**'
+  workflow_dispatch:
+
+env:
+  ACR_NAME: oreacrregistry
+  IMAGE_NAME: caldova-clinical-api-java
+  IMAGE: oreacrregistry.azurecr.io/caldova-clinical-api-java:${{ github.sha }}
+
+jobs:
+  build-and-sign:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Build image
+        run: >-
+          docker build
+          --file Java_app/CaldovaClinicalApiJava/Dockerfile
+          --tag "${{ env.IMAGE }}"
+          Java_app/CaldovaClinicalApiJava
+
+      - name: Azure login
+        if: github.event_name != 'pull_request'
+        uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in to ACR
+        if: github.event_name != 'pull_request'
+        run: |
+          access_token="$(az acr login \
+            --name "${{ env.ACR_NAME }}" \
+            --expose-token \
+            --query accessToken \
+            --output tsv)"
+          test -n "$access_token"
+          printf '%s' "$access_token" | docker login \
+            "${{ env.ACR_NAME }}.azurecr.io" \
+            --username 00000000-0000-0000-0000-000000000000 \
+            --password-stdin
+
+      - name: Push image
+        if: github.event_name != 'pull_request'
+        run: docker push "${{ env.IMAGE }}"
+
+      - name: Resolve image digest
+        if: github.event_name != 'pull_request'
+        run: |
+          digest="$(az acr manifest show-metadata \
+            --registry "${{ env.ACR_NAME }}" \
+            --name "${{ env.IMAGE_NAME }}:${{ github.sha }}" \
+            --query digest \
+            --output tsv)"
+          test -n "$digest"
+          echo "IMAGE_DIGEST=$digest" >> "$GITHUB_ENV"
+
+      - name: Install Cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign image digest
+        if: github.event_name != 'pull_request'
+        run: >-
+          cosign sign --yes
+          "${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}@$IMAGE_DIGEST"
+
+

@@ -1,0 +1,50 @@
+name: Build and test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+# If a newer CI run starts for the same branch or PR, the older in-progress run is cancelled
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+# Checks out the source code
+      - name: Check out source
+        uses: actions/checkout@v4
+# Reads java.version from src/pom.xml (1.8 -> 8) so CI matches the Java version of the branch being built, including modernised branches
+      - name: Detect Java version from pom.xml
+        id: java
+        run: |
+          version=$(sed -n 's:.*<java.version>\(.*\)</java.version>.*:\1:p' src/pom.xml | head -n1)
+          version="${version#1.}"
+          echo "version=${version:-8}" >> "$GITHUB_OUTPUT"
+          echo "Using Java ${version:-8}"
+# Install the Temurin JDK detected from the pom
+      - name: Set up Temurin ${{ steps.java.outputs.version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ steps.java.outputs.version }}
+          cache: maven
+          cache-dependency-path: src/pom.xml
+# Maven command to compile the app, run tests, and perform any configured verification checks
+      - name: Build and test
+        working-directory: src
+        run: mvn --batch-mode --no-transfer-progress verify

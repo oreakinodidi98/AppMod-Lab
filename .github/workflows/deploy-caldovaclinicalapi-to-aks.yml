@@ -1,0 +1,119 @@
+# This workflow builds the API image in ACR and deploys it to AKS.
+# Azure authentication uses GitHub OIDC with these repository secrets:
+# - AZURE_CLIENT_ID
+# - AZURE_TENANT_ID
+# - AZURE_SUBSCRIPTION_ID
+
+name: deploy-CaldovaClinicalApi-to-aks
+
+on:
+    push:
+        paths:
+        - 'Java_app/**'
+        branches: [main]
+    pull_request:
+        paths:
+        - 'Java_app/**'
+        branches: [main]
+    schedule:
+        - cron: '30 13 * * 1'
+    workflow_dispatch:
+
+env:
+    ACR_RESOURCE_GROUP: prometheuslab1779404459
+    AZURE_CONTAINER_REGISTRY: oreacrregistry
+    CONTAINER_NAME: caldova-clinical-api-java
+    CLUSTER_NAME: myakscluster1779404459
+    CLUSTER_RESOURCE_GROUP: prometheuslab1779404459
+    SERVICE_ACCOUNT_NAME: caldovaclinicalapi
+    DEPLOYMENT_MANIFEST_PATH: |
+        k8s/configmap-api.yaml
+        k8s/deployment-api.yaml
+        k8s/service-api.yaml
+    DOCKER_FILE: Java_app/CaldovaClinicalApiJava/Dockerfile
+    BUILD_CONTEXT_PATH: Java_app/CaldovaClinicalApiJava
+    NAMESPACE: caldova
+
+jobs:
+    buildImage:
+        permissions:
+            contents: read
+            id-token: write
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+            - name: Azure login
+              uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
+              with:
+                  client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                  subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+            - name: Build and push image to ACR
+              run: |
+                  az acr build \
+                    --image ${{ env.CONTAINER_NAME }}:${{ github.sha }} \
+                    --registry ${{ env.AZURE_CONTAINER_REGISTRY }} \
+                    --resource-group ${{ env.ACR_RESOURCE_GROUP }} \
+                    --file ${{ env.DOCKER_FILE }} \
+                    ${{ env.BUILD_CONTEXT_PATH }}
+
+    deploy:
+        permissions:
+            actions: read
+            contents: read
+            id-token: write
+        runs-on: ubuntu-latest
+        needs: [buildImage]
+        steps:
+            - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+            - name: Azure login
+              uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
+              with:
+                  client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                  tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+                  subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+            - name: Get AKS credentials
+              run: |
+                  az aks get-credentials \
+                    --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} \
+                    --name ${{ env.CLUSTER_NAME }} \
+                    --file "${{ runner.temp }}/kubeconfig" \
+                    --overwrite-existing
+
+                  echo "KUBECONFIG=${{ runner.temp }}/kubeconfig" >> $GITHUB_ENV
+
+            - name: Configure workload identity ServiceAccount
+              run: |
+                  kubectl create serviceaccount ${{ env.SERVICE_ACCOUNT_NAME }} \
+                    --namespace ${{ env.NAMESPACE }} \
+                    --dry-run=client \
+                    --output yaml | kubectl apply -f -
+
+                  kubectl annotate serviceaccount caldovaclinicalapi \
+                    --namespace ${{ env.NAMESPACE }} \
+                    azure.workload.identity/client-id="${{ secrets.AZURE_CLIENT_ID }}" \
+                    --overwrite
+
+            - name: Deploys application
+              uses: Azure/k8s-deploy@c7ebd0d5f39477a23f1b5dea0f52e6db04adf28e # v6.0.0
+              with:
+                  action: deploy
+                  manifests: ${{ env.DEPLOYMENT_MANIFEST_PATH }}
+                  images: |
+                      ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
+                  namespace: ${{ env.NAMESPACE }}
+
+            - name: Annotate deployment
+              run: |
+                  if kubectl get deployment -n ${{ env.NAMESPACE }} --no-headers 2>/dev/null | grep -q .; then
+                    kubectl annotate deployment --all -n ${{ env.NAMESPACE }} \
+                      aks-project/pipeline-repo="${{ github.repository }}" \
+                      aks-project/pipeline-workflow="${{ github.workflow }}" \
+                      aks-project/deployed-by="vscode" \
+                      aks-project/pipeline-run-url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                      --overwrite
+                  fi

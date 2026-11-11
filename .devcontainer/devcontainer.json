@@ -1,0 +1,22 @@
+{
+    "name": "Codespaces Ap github pages",
+    "dockerFile": "Dockerfile",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "vscode-icons-team.vscode-icons",
+                "ms-azuretools.vscode-docker",
+                "ginfuru.ginfuru-vscode-jekyll-syntax"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "rubyLsp.rubyVersionManager": {
+                    "identifier": "none"
+                },
+                "rubyLsp.bundleGemfile": "",
+                "rubyLsp.enabled": false
+            }
+        }
+    },
+    "postCreateCommand": "sudo chmod -R a+w /usr/local/rvm/gems || true && bundle install"
+}
