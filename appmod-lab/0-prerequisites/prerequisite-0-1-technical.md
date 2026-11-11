@@ -14,7 +14,7 @@ Prepare a disposable GitHub fork and the access needed to provision a temporary 
 
 You need:
 
-* A GitHub account with GitHub Copilot enabled and permission to create a disposable fork. The automated exercise also needs GitHub Actions and the token permissions described in [module 02](../2-automated-modernization/).
+* A GitHub account with GitHub Copilot enabled and permission to create a fork. The automated exercise also needs GitHub Actions and the token permissions described in [module 02](../2-automated-modernization/).
 * Visual Studio Code with GitHub Copilot and the [GitHub Copilot modernization extension](https://marketplace.visualstudio.com/items?itemName=vscjava.migrate-java-to-azure).
 * A Windows workstation with Git, PowerShell 7.4 or later, Maven 3, a Java 8 JDK, and the JDK for your chosen upgrade target. Install JDK 17 as well for the Caldova Java exercise.
 * Azure CLI 2.86.0 or later, `kubectl`, `kubelogin`, `psql`, and `tar` available on your command path.
