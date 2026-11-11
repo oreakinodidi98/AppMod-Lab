@@ -3,14 +3,14 @@ title: Build and deploy Caldova
 description: Build participant-specific images, deploy them on AKS, and verify database-backed behavior.
 ms.topic: tutorial
 parent: Module 04 - Deploy the Python application
-nav_order: 1
+nav_order: 2
 ---
 
 ## Before you start
 
-Complete [module 03](../3-azure-environment/) and select the Python or Java
-contexts in [module 04](./) or
-[module 05](../5-java-application/). Use the same PowerShell terminal and keep
+Complete [module 03]({% link appmod-lab/3-azure-environment/azure-environment-3-1-setup.md %}) and select the Python or Java
+contexts in [module 04]({% link appmod-lab/4-python-application/python-application-4-1-deploy.md %}) or
+[module 05]({% link appmod-lab/5-java-application/java-application-5-1-deploy.md %}). Use the same PowerShell terminal and keep
 your lab settings available. The commands operate only on your dedicated resource
 group, registry, cluster, and namespace.
 
@@ -65,7 +65,9 @@ The `az acr manifest` command is in preview in Azure CLI.
 
 The ConfigMap contains non-secret connection settings. The API pod receives its
 managed identity configuration through the service account and workload identity
-webhook; it does not receive a database password.
+webhook; it does not receive a database password. The template is in the
+`AppMod-Lab` clone (`LAB_REPO`); the image sources come from the separate
+`AKS_AppMod_Demos` clone (`LAB_APP_REPO`).
 
 ```powershell
 kubectl create configmap $env:LAB_CONFIG_NAME --namespace $env:LAB_NAMESPACE `
@@ -205,5 +207,5 @@ page's HTTP response as an end-to-end success.
 ## Return to your module
 
 Keep the main terminal open so the inventory response remains available for
-comparison. Return to [Python](./#3-record-the-comparison-baseline)
-or [Java](../5-java-application/#3-compare-behavior).
+comparison. Return to [Python]({% link appmod-lab/4-python-application/python-application-4-1-deploy.md %}#3-record-the-comparison-baseline)
+or [Java]({% link appmod-lab/5-java-application/java-application-5-1-deploy.md %}#3-compare-behavior).

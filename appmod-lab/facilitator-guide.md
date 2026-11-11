@@ -9,7 +9,12 @@ nav_order: 9
 
 Meet the customer ahead of time to agree on the application story, participant
 experience, approved subscription and region, spending limit, resource ownership,
-and deletion time. Review the [prerequisites](0-prerequisites/) together.
+and deletion time. Review the [prerequisites]({% link appmod-lab/0-prerequisites/index.md %}) together.
+
+Participants need separate clones: `LAB_REPO` for the `AppMod-Lab` instructions and
+deployment template, and `LAB_APP_REPO` for a disposable
+[AKS_AppMod_Demos fork](https://github.com/oreakinodidi98/AKS_AppMod_Demos).
+Run modernization and review Actions in the application fork, not this documentation repository.
 
 * Confirm that each participant or pair can create a **new dedicated** resource group, AKS Automatic cluster, ACR, PostgreSQL flexible server, and managed identity, and can create the required registry and cluster role assignments.
 * Check regional availability, quota, provider registration, organization policies, network egress, and access to public container and package registries.
@@ -36,8 +41,8 @@ the customer's cost controls; do not promise a fixed workshop cost.
 
 ## Talking points and gates
 
-Use modules [01](1-interactive-modernization/) and
-[02](2-automated-modernization/) to introduce the two paths. The interactive path can
+Use modules [01]({% link appmod-lab/1-interactive-modernization/index.md %}) and
+[02]({% link appmod-lab/2-automated-modernization/index.md %}) to introduce the two paths. The interactive path can
 include plan approval, but the unattended CLI run has **no human plan-approval
 gate**. Its human gate is review of the resulting pull request. Neither path proves
 that a change is safe solely because an agent or build reports success.
@@ -54,8 +59,8 @@ human decision on a proposed follow-up.
 
 * If a participant cannot obtain GitHub Actions or token permissions, have them review a facilitator-owned run that was prepared and approved beforehand. Explain that they did not execute the automation themselves.
 * If Azure quota, policy, permissions, or region availability blocks provisioning, pause the Azure exercises. Use a previously approved facilitator environment for a demonstration, and record that the participant did not provision their own resources.
-* If PostgreSQL or workload identity is unavailable, inspect the failure in [the deployment exercise](4-python-application/deploy-caldova/). Do not switch to synthetic data or disable readiness checks without explaining the behavior change.
+* If PostgreSQL or workload identity is unavailable, inspect the failure in [the deployment exercise]({% link appmod-lab/4-python-application/deploy-caldova.md %}). Do not switch to synthetic data or disable readiness checks without explaining the behavior change.
 * If an image build or upgrade takes longer than planned, continue with the architecture and review discussion while it runs, then return to the result.
-* If resources must be retained, name an owner and a deletion time. Ensure the owner has the values and access needed to finish [cleanup](7-cleanup/).
+* If resources must be retained, name an owner and a deletion time. Ensure the owner has the values and access needed to finish [cleanup]({% link appmod-lab/7-cleanup/index.md %}).
 
-[Back to the workshop](../index.md)
+[Back to the workshop]({% link index.md %})

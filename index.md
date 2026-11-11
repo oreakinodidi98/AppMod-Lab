@@ -16,30 +16,40 @@ Finish by investigating a workload and discussing how operational feedback becom
 
 | Module | Topic |
 | --- | --- |
-| [00 - Prepare](./appmod-lab/0-prerequisites/) | Tools, access, and a disposable fork |
-| [01 - Interactive modernization](./appmod-lab/1-interactive-modernization/) | Establish a baseline and review a Java upgrade plan |
-| [02 - Automated modernization](./appmod-lab/2-automated-modernization/) | Inspect a workflow run, result, and review gate |
-| [03 - Azure environment](./appmod-lab/3-azure-environment/) | Create a dedicated AKS, registry, database, and identity |
-| [04 - Caldova Python](./appmod-lab/4-python-application/) | Build and deploy the Python implementation |
-| [05 - Caldova Java](./appmod-lab/5-java-application/) | Deploy Java against the same database and compare behavior |
-| [06 - Operate and improve](./appmod-lab/6-operate-and-improve/) | Inspect health and practice a human-triaged feedback loop |
-| [07 - Cleanup](./appmod-lab/7-cleanup/) | Remove workshop resources and credentials |
+| [00 - Prepare]({% link appmod-lab/0-prerequisites/index.md %}) | Tools, access, and a disposable fork |
+| [01 - Interactive modernization]({% link appmod-lab/1-interactive-modernization/index.md %}) | Establish a baseline and review a Java upgrade plan |
+| [02 - Automated modernization]({% link appmod-lab/2-automated-modernization/index.md %}) | Inspect a workflow run, result, and review gate |
+| [03 - Azure environment]({% link appmod-lab/3-azure-environment/index.md %}) | Create a dedicated AKS, registry, database, and identity |
+| [04 - Caldova Python]({% link appmod-lab/4-python-application/index.md %}) | Build and deploy the Python implementation |
+| [05 - Caldova Java]({% link appmod-lab/5-java-application/index.md %}) | Deploy Java against the same database and compare behavior |
+| [06 - Operate and improve]({% link appmod-lab/6-operate-and-improve/index.md %}) | Inspect health and practice a human-triaged feedback loop |
+| [07 - Cleanup]({% link appmod-lab/7-cleanup/index.md %}) | Remove workshop resources and credentials |
 
-Modules 04 and 05 both use the [shared deployment exercise](./appmod-lab/4-python-application/deploy-caldova/). Complete module 03 before either application module. Module 05 can be done without module 04, but doing both makes the comparison more useful.
+Each module has an overview page with links to its exercise files.
+Modules 04 and 05 both use the [shared deployment exercise]({% link appmod-lab/4-python-application/deploy-caldova.md %}). Complete module 03 before either application module. Module 05 can be done without module 04, but doing both makes the comparison more useful.
 
-> [!IMPORTANT]
-> The application source directories referenced by some exercises (`src/`, `Python_app/`, `Java_app/`, and `Agentic_SDLC/`) are not included in this checkout. Add the corresponding sample projects and diagrams before running those steps.
+## Application source
+
+The applications are maintained in [AKS_AppMod_Demos](https://github.com/oreakinodidi98/AKS_AppMod_Demos):
+
+* [Java todo application](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/src) for the modernization exercises
+* [Python Caldova](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/Python_app)
+* [Java Caldova](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/Java_app)
+
+Follow module 00 to create a disposable application fork and set `LAB_APP_REPO`
+to its local clone. `LAB_REPO` points to the separate `AppMod-Lab` documentation
+clone, which contains the workshop deployment template.
 
 ## Before you start
 
-Read [the prerequisites](./appmod-lab/0-prerequisites/). The Azure exercises create billable resources in a new, dedicated resource group. Agree on a budget, ownership, region, permissions, and deletion with the customer before provisioning.
+Read [the prerequisites]({% link appmod-lab/0-prerequisites/index.md %}). The Azure exercises create billable resources in a new, dedicated resource group. Agree on a budget, ownership, region, permissions, and deletion with the customer before provisioning.
 
 The workshop intentionally uses a public AKS API endpoint, a PostgreSQL public endpoint restricted to specified IPv4 addresses, and `kubectl port-forward`. This is a short-lived learning environment, not a production reference architecture. If customer policy prohibits this network design, stop and work with the platform team on an approved private design rather than weakening the policy.
 
 ## Facilitator resources
 
-* [Facilitator guide](./appmod-lab/facilitator-guide/)
+* [Facilitator guide]({% link appmod-lab/facilitator-guide.md %})
 * [GitHub Copilot modernization quickstart](https://learn.microsoft.com/azure/developer/github-copilot-app-modernization/quickstart-upgrade)
 * [AKS Automatic quickstart](https://learn.microsoft.com/azure/aks/automatic/quick-automatic-managed-network)
 
-[Start with module 00](./appmod-lab/0-prerequisites/)
+[Start with module 00]({% link appmod-lab/0-prerequisites/index.md %})
