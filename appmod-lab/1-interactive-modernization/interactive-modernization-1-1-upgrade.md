@@ -198,81 +198,80 @@ You don't need to import a report for this exercise. For more information, see
 3. Select **OK** to start the assessment. It may take around 30 seconds to appear as running and a couple of minutes to finish.
 4. Review the report and note any findings or errors. If it fails, investigate before continuing.
 
-### Overview of the assessment
+### Review the assessment results
 
-GitHub Copilot Modernization consumes the assessment results reviews scan findings and generates targeted recommendations to prepare the application for target service and migration to Azure.
+The report summarizes the app's technology and the issues found for Java Upgrade and Cloud Readiness. Cloud readiness issues are grouped as **Mandatory**, **Potential**, or **Optional**. The report also shows an estimated effort size for the selected Azure service. Check that the app is identified as running on Java 1.8.
 
-- **Target Compute Service**: the destination runtime or Azure compute service.
-- **Assesment Domains**: the modernization capability you want to focus on.
-- **Analysis Coverage**: how deep the analysis should run.
-- **Target os**: operating system guidance (Windows or Linux). For this lab, you are not focusing on OS-specific guidance.
+[![Assessment results showing Java version, estimated effort, and cloud readiness and Java upgrade issues.]({{ '/assets/images/SRC_Assessment_Results.png' | relative_url }})]({{ '/assets/images/SRC_Assessment_Results.png' | relative_url }})
 
-**Target Compute Service**
+**What this shows:** An example assessment report with Azure Kubernetes Service selected. Select the screenshot to view it full size.
 
-| Target | Description   |
-|--|--|
-| azure-aks | Best practices for deploying an app to Azure Kubernetes Service.|
-| azure-appservice | Best practices for deploying an app to Azure App Service. |
-| azure-container-apps | Best practices for deploying an app to Azure Container Apps. |
+Try changing the **Target Service** dropdown from Azure Kubernetes Service to Azure Container Apps. Notice how issues may appear, disappear, or change criticality for a different hosting service.
 
+Expand an issue to see the affected file, why it matters for the target service,
+and the recommended guidance. The issue counts and estimated effort help you
+understand the size of the work; the details are useful when walking a customer
+through the findings.
 
-**Target Runtime**
+[![Assessment report showing an expanded cloud readiness issue for Azure Container Apps.]({{ '/assets/images/SRC_Assessment_Results_issues.png' | relative_url }})]({{ '/assets/images/SRC_Assessment_Results_issues.png' | relative_url }})
 
-| Runtime | Description |
-|--|--|
-| openjdk11 | Best practices for migrating to OpenJDK 11. |
-| openjdk17 | Best practices for migrating to OpenJDK 17. |
-| openjdk21 | Best practices for migrating to OpenJDK 21. |
-| openjdk25 | Best practices for migrating to OpenJDK 25. |
+**What this shows:** An expanded issue with its affected file, explanation, and recommended guidance. Select the screenshot to view it full size.
 
-**Analysis modes**
+### Learn about custom assessment settings
 
-| Mode | Description |
-|--------|---------|
-| issue-only  | analyze source code to only detect issues |
-| **source-only** | Fast analysis that examines source code only. |
-| **full** | Full analysis: inspects source code and scans dependencies (slower, more thorough). |
+The recommended assessment is all you need for this module. For a future
+assessment, **Custom Assessment** lets you choose:
 
-> [!TIP]
-> **Where you change these options**
->
-> You can customize this report by selecting the Custom Assesment tab to change targets and modes. 
-> 
-> [![Custom assessment options for assessment domains, analysis coverage, target runtime, and cloud readiness.]({{ '/assets/images/customassessment.png' | relative_url }})]({{ '/assets/images/customassessment.png' | relative_url }})
-> 
-> If you want a broader scan (including dependency checks), change `mode` to `full`, or add/remove entries under `target runtime` to focus recommendations on a specific runtime or Azure compute service.
+* **Assessment domains:** Areas to review, such as Java Upgrade or Cloud Readiness.
+* **Analysis coverage:** How much detail to include. Options can vary by extension
+  version; broader analysis can take longer.
+* **Target runtime:** The JDK version to assess against, such as OpenJDK 11, 17,
+  21, or 25.
+* **Target compute services:** Azure App Service, Azure Container Apps, or Azure
+  Kubernetes Service. Selecting more than one lets you compare findings.
+* **Target operating system:** Linux or Windows. This module does not focus on
+  OS-specific guidance.
 
-Assessment and implementation are different decisions. Assessment gathers facts about the code, dependencies, target compatibility, and tests; a plan proposes changes based on those facts. 
+[![Custom assessment options for assessment domains, analysis coverage, target runtime, and cloud readiness.]({{ '/assets/images/customassessment.png' | relative_url }})]({{ '/assets/images/customassessment.png' | relative_url }})
 
-Review the plan before execution because the agent cannot decide which compatibility tradeoffs your users, organization, or release policy will accept. A supported target is not necessarily a drop-in target: runtime, framework, plugins, and libraries must work together, and the newest available version is not a compatibility strategy.
+**What this shows:** Settings you can choose when starting a custom assessment.
+Select the screenshot to view it full size. You'll use Custom Assessment in
+[module 07]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}).
 
-Keep the upgrade bounded. Agree on one target and the behavior to preserve, and
-require the plan to identify risks, validation, and a way to recover. This makes
-the change reviewable and helps explain unexpected build or test failures instead
-of letting scope expand into unrelated modernization.
+### Plan the Java upgrade
+
+The report's **Create Plan** option can create a plan for the selected findings.
+We'll leave that option for now and focus on the Java and framework upgrade
+first; cloud readiness findings may change after the upgrade.
 
 After reviewing the assessment output, select **Upgrade Java Runtime &
 Frameworks**. Choose a supported Java version and a compatible framework version
 if needed. Agree on these with the customer. The newest version may not be the
 right choice for the app.
 
+[![Copilot presenting options to upgrade Java alone or upgrade Java and Spring Boot together.]({{ '/assets/images/upgrade_java_options.png' | relative_url }})]({{ '/assets/images/upgrade_java_options.png' | relative_url }})
+
+**What this shows:** An example of the upgrade scope options Copilot may offer.
+Choose the scope that fits your app. Select the screenshot to view it full size.
+
 Ask Copilot to create a plan before making changes. Review what it will change,
 what should keep working, how to test it, any security issues, and how to undo
-the upgrade.
+the upgrade. Check that the runtime, framework, plugins, and libraries are
+compatible, and keep the plan focused on the agreed target.
 
 You can use this prompt and add the versions you've agreed on:
 
 ```text
-Run an assessment on the todo app in src for an upgrade to [Java version]
-and [framework version]. Keep the existing todo features working. Show me
-what needs to change, what might break, which JDKs I need, how to test the
-upgrade, and how to undo it. Wait for my approval before making changes.
+Using the assessment results, create a plan to upgrade the todo app in src to
+[Java version] and [framework version]. Keep the existing todo features working.
+Show me what needs to change, what might break, which JDKs I need, how to test
+the upgrade, and how to undo it. Wait for my approval before making changes.
 ```
 
 Once you're happy with the plan, approve only the changes you've agreed on and
-let Copilot run the upgrade. Follow the
-[interactive modernization quickstart](https://learn.microsoft.com/azure/developer/github-copilot-app-modernization/quickstart-upgrade)
-if the options in the extension look different.
+let Copilot run the upgrade. 
+
+You can also follow the [interactive modernization quickstart](https://learn.microsoft.com/azure/developer/github-copilot-app-modernization/quickstart-upgrade) if the options in the extension look different.
 
 ## 4. Check the changes and test the app
 
