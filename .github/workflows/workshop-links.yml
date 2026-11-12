@@ -1,0 +1,44 @@
+name: Workshop site links
+
+on:
+  push:
+    paths:
+      - 'appmod-lab/**'
+      - 'index.md'
+      - 'about.md'
+      - 'README.md'
+      - '_config.yml'
+      - 'Gemfile*'
+      - 'assets/images/**'
+      - 'tests/site-links.Tests.ps1'
+      - '.github/workflows/workshop-links.yml'
+  pull_request:
+    paths:
+      - 'appmod-lab/**'
+      - 'index.md'
+      - 'about.md'
+      - 'README.md'
+      - '_config.yml'
+      - 'Gemfile*'
+      - 'assets/images/**'
+      - 'tests/site-links.Tests.ps1'
+      - '.github/workflows/workshop-links.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Build the workshop site
+        run: bundle exec jekyll build
+      - name: Check generated page links
+        shell: pwsh
+        run: ./tests/site-links.Tests.ps1

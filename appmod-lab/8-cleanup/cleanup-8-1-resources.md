@@ -163,5 +163,5 @@ The resource group and its managed resources are gone, or a named owner has acce
 the remaining deletion work. Port forwards are stopped, local lab files are removed,
 and demonstration automation and credentials are disabled or revoked.
 
-[Workshop home]({% link index.md %}) |
-[Facilitator guide]({% link appmod-lab/facilitator-guide.md %})
+[Workshop home]({{ site.baseurl }}{% link index.md %}) |
+[Facilitator guide]({{ site.baseurl }}{% link appmod-lab/facilitator-guide.md %})

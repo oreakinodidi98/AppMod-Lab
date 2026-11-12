@@ -14,8 +14,8 @@ Kubernetes manifests, or passwordless database support. You generate and validat
 those changes rather than starting with the already-modernized implementation.
 
 Allow 90-120 minutes, plus time to create the Azure environment. Complete
-[module 00]({% link appmod-lab/0-prerequisites/index.md %}) first. Before deploying, complete
-[module 03]({% link appmod-lab/3-azure-environment/index.md %}), or ask your facilitator for a dedicated,
+[module 00]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/index.md %}) first. Before deploying, complete
+[module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %}), or ask your facilitator for a dedicated,
 approved environment with equivalent registry, database, and identity access.
 
 The starter app is stored in this lab's `assets/Scenario1App` folder.
@@ -203,7 +203,7 @@ or adding a service-account annotation alone is not sufficient.
 
 Commit the reviewed changes. Create clean, temporary build contexts from that
 commit, following the archive approach in
-[Python path in module 04]({% link appmod-lab/4-deploy-application/deploy-application-4-1-python.md %}),
+[Python path in module 04]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-1-python.md %}),
 but select the two components under `Scenario1App`. Check that your
 `.dockerignore` files exclude virtual environments, local secrets, and database
 dumps before uploading either context.
@@ -215,7 +215,7 @@ repositories, such as `"$($env:LAB_PREFIX)/caldova-source-api"` and
 `LAB_WEB_REPOSITORY`.
 
 Follow **step 1 only** of the
-[shared deployment exercise]({% link appmod-lab/4-deploy-application/deploy-caldova.md %})
+[shared deployment exercise]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-caldova.md %})
 to build the two images and record their digests. Put those digest-based image
 references in your generated manifests. Do not run its Caldova deployment
 template unless you have checked that your app supports all of its settings,
@@ -256,9 +256,9 @@ account, federation subject, client ID, database role, and TLS configuration.
 Stop port forwards and local services, and remove `DATABASE_URL` from the API
 terminal with `Remove-Item Env:DATABASE_URL`. Keep only sanitized review evidence.
 Keep the shared lab environment for PetClinic in module 07.
-After that, follow [module 08]({% link appmod-lab/8-cleanup/index.md %}) for cleanup. Shared
+After that, follow [module 08]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) for cleanup. Shared
 Gateways and platform resources must remain untouched; ask their owner to remove
 only the routes, grants, or DNS entries approved for this exercise.
 
-[Next: PetClinic on AKS Automatic]({% link appmod-lab/7-petclinic-aks-automatic/index.md %}) |
-[Workshop home]({% link index.md %})
+[Next: PetClinic on AKS Automatic]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}) |
+[Workshop home]({{ site.baseurl }}{% link index.md %})

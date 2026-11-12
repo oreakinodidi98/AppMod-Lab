@@ -8,4 +8,4 @@ Download the todo application to your repository, ask Copilot to assess it, revi
 
 ## Exercise
 
-[Assess, Plan, Upgrade, and Validate]({% link appmod-lab/1-interactive-modernization/interactive-modernization-1-1-upgrade.md %})
+[Assess, Plan, Upgrade, and Validate]({{ site.baseurl }}{% link appmod-lab/1-interactive-modernization/interactive-modernization-1-1-upgrade.md %})

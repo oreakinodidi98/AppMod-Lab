@@ -11,7 +11,7 @@ nav_order: 1
 Observe the deployed application, practice a bounded recovery exercise, and turn an
 operational signal into a proposed engineering action. This module requires a
 successful Python or Java deployment from
-[module 04]({% link appmod-lab/4-deploy-application/index.md %}).
+[module 04]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/index.md %}).
 
 ## 1. Inspect the workload
 
@@ -89,6 +89,15 @@ work. The telemetry, bug-hunter, and incident-response agents are conceptual; th
 are not installed or authorized by this workshop. Kubernetes replacing a pod is a
 controller action, not an AI agent remediation.
 
+[![Production logs, metrics, feedback, and incidents feed into proactive checks, monitoring, and incident response, with human approval before new work or mitigation.]({{ '/assets/images/post-production-loop.png' | relative_url }})]({{ '/assets/images/post-production-loop.png' | relative_url }})
+
+**What this shows:** Follow the arrows from a production signal to a proposed
+action. The green diamonds are human decisions: triage decides whether to create
+work or update instructions, and the on-call person decides whether to act on an
+incident suggestion. Approved work feeds back into development or into a
+mitigation, runbook, or communications update. Select the diagram to view it full
+size.
+
 In pairs, choose one observed or hypothetical signal, such as repeated database
 readiness failures. Write a short handoff with:
 
@@ -110,5 +119,5 @@ claiming the conceptual agents were deployed.
 Keep the Azure environment for the remaining modules. Next, start with the
 original Caldova source and prepare it for AKS.
 
-[Next: modernize Caldova from source]({% link appmod-lab/6-caldova-source-modernization/index.md %}) |
-[Workshop home]({% link index.md %})
+[Next: modernize Caldova from source]({{ site.baseurl }}{% link appmod-lab/6-caldova-source-modernization/index.md %}) |
+[Workshop home]({{ site.baseurl }}{% link index.md %})

@@ -10,7 +10,7 @@ nav_order: 2
 
 Build and deploy the Spring Boot implementation using the same API contract,
 PostgreSQL database, and workload identity as the Python implementation. You can
-choose this path after [module 03]({% link appmod-lab/3-azure-environment/index.md %})
+choose this path after [module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %})
 without deploying Python first. If you want to compare both versions, complete
 the Python path first, then return here.
 
@@ -84,7 +84,7 @@ $env:LAB_WEB_REPOSITORY = "$($env:LAB_PREFIX)/java-web"
 ```
 
 If the Python port forwards are still running, stop them with Ctrl+C. Follow the
-[shared build and deployment exercise]({% link appmod-lab/4-deploy-application/deploy-caldova.md %}),
+[shared build and deployment exercise]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-caldova.md %}),
 then return here. If you already deployed Python, this updates the same
 Kubernetes deployments to the Java images. Otherwise, it creates the deployments.
 The database and identity from module 03 remain in place. Open new port forwards
@@ -127,5 +127,5 @@ The Java tests pass, both Java pods are ready, and the API and web application s
 the seeded database inventory. If you ran both paths, you have compared their
 responses and can identify the evidence you would need for a production migration.
 
-[Next: operate and improve]({% link appmod-lab/5-operate-and-improve/index.md %}) |
-[Workshop home]({% link index.md %})
+[Next: operate and improve]({{ site.baseurl }}{% link appmod-lab/5-operate-and-improve/index.md %}) |
+[Workshop home]({{ site.baseurl }}{% link index.md %})

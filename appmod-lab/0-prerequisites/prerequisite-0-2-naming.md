@@ -108,5 +108,5 @@ resource group and automatic monitoring resources, can have service-generated
 names. Record those actual names rather than trying to rename them.
 See the [service naming rules](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules).
 
-[Next: interactive modernization]({% link appmod-lab/1-interactive-modernization/index.md %}) |
-[Workshop home]({% link index.md %})
+[Next: interactive modernization]({{ site.baseurl }}{% link appmod-lab/1-interactive-modernization/index.md %}) |
+[Workshop home]({{ site.baseurl }}{% link index.md %})

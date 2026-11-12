@@ -8,7 +8,7 @@ Inspect workload health, observe a controlled pod recovery, and turn an operatio
 
 ## Exercise
 
-[Observe, recover, and propose a follow-up]({% link appmod-lab/5-operate-and-improve/operate-and-improve-5-1-observe.md %})
+[Observe, recover, and propose a follow-up]({{ site.baseurl }}{% link appmod-lab/5-operate-and-improve/operate-and-improve-5-1-observe.md %})
 
 Next, use Copilot to prepare the original Caldova app for AKS in
-[module 06]({% link appmod-lab/6-caldova-source-modernization/index.md %}).
+[module 06]({{ site.baseurl }}{% link appmod-lab/6-caldova-source-modernization/index.md %}).

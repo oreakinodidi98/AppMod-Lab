@@ -23,7 +23,7 @@ Automatic. These are part of the main workshop flow. Agree on the schedule with
 your facilitator; the full workshop can be split across sessions.
 
 > **Important:** Start with the
-> [prerequisites]({% link appmod-lab/0-prerequisites/index.md %}). You need your
+> [prerequisites]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/index.md %}). You need your
 > own GitHub account, GitHub Copilot access, and an approved Azure subscription
 > with the required permissions. Azure resources and image builds can incur
 > charges. Agree on a budget and clean up when you finish.
@@ -40,7 +40,7 @@ Create your own workshop repository and download the starter files as each lab
 needs them. You do not need to fork or clone this lab repository. PetClinic is the
 exception: module 07 uses a separate upstream checkout.
 
-[View the workshop modules]({% link index.md %})
+[View the workshop modules]({{ site.baseurl }}{% link index.md %})
 
 ## Learn more
 
@@ -72,7 +72,7 @@ deployment templates.
 For diagrams showing a production AKS design, see the
 [AKS baseline architecture](https://learn.microsoft.com/azure/architecture/reference-architectures/containers/aks/baseline-aks).
 Compare it with the simpler environment you create in
-[module 03]({% link appmod-lab/3-azure-environment/index.md %}).
+[module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %}).
 This workshop uses public endpoints with restricted access and local port
 forwarding; it does not implement that production architecture.
 
@@ -94,4 +94,4 @@ trademarks must follow
 Third-party names and logos are subject to their owners' policies. Their use here
 does not imply sponsorship or endorsement.
 
-[Start with the prerequisites]({% link appmod-lab/0-prerequisites/index.md %})
+[Start with the prerequisites]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/index.md %})

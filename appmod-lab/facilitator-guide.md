@@ -9,10 +9,10 @@ nav_order: 10
 
 Meet the customer ahead of time to agree on the application story, participant
 experience, approved subscription and region, spending limit, resource ownership,
-and deletion time. Review the [prerequisites]({% link appmod-lab/0-prerequisites/index.md %}) together.
+and deletion time. Review the [prerequisites]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/index.md %}) together.
 
 Agree on each participant's owner code and instance on the
-[Naming page]({% link appmod-lab/0-prerequisites/prerequisite-0-2-naming.md %}).
+[Naming page]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-2-naming.md %}).
 Use different values where names would clash. `sc` means Sweden Central; check that
 the selected services and quota are available there before accepting that default.
 
@@ -54,9 +54,9 @@ source modernization and 120-150 minutes for PetClinic, plus the earlier modules
 and Azure setup. Plan more than one session if needed. Keep the environment
 until module 07 is complete, then clean up in module 08.
 
-* [Module 06: Caldova from source]({% link appmod-lab/6-caldova-source-modernization/index.md %}) downloads `Scenario1App` from this repository's assets, not the finished module 04 app. Run through local PostgreSQL setup and the Copilot changes before the session. Check that the generated app gets and renews Entra tokens before deploying it.
+* [Module 06: Caldova from source]({{ site.baseurl }}{% link appmod-lab/6-caldova-source-modernization/index.md %}) downloads `Scenario1App` from this repository's assets, not the finished module 04 app. Run through local PostgreSQL setup and the Copilot changes before the session. Check that the generated app gets and renews Entra tokens before deploying it.
 
-* [Module 07: PetClinic on AKS Automatic]({% link appmod-lab/7-petclinic-aks-automatic/index.md %}) uses a separate upstream checkout. Agree on a source commit, compatible JDK, PostgreSQL profile, and Compose configuration ahead of time. Try the assessment with your installed extension; the screenshots and issue counts are examples.
+* [Module 07: PetClinic on AKS Automatic]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}) uses a separate upstream checkout. Agree on a source commit, compatible JDK, PostgreSQL profile, and Compose configuration ahead of time. Try the assessment with your installed extension; the screenshots and issue counts are examples.
 
 * Give PetClinic a separate database and namespace. Decide whether participants transfer synthetic data or initialize a fresh database. Agree on validation and rollback before migration.
 
@@ -75,8 +75,8 @@ verify cleanup with its owner.
 
 ## Talking points and gates
 
-Use modules [01]({% link appmod-lab/1-interactive-modernization/index.md %}) and
-[02]({% link appmod-lab/2-automated-modernization/index.md %}) to introduce the two paths. The interactive path can
+Use modules [01]({{ site.baseurl }}{% link appmod-lab/1-interactive-modernization/index.md %}) and
+[02]({{ site.baseurl }}{% link appmod-lab/2-automated-modernization/index.md %}) to introduce the two paths. The interactive path can
 include plan approval, but the unattended CLI run has **no human plan-approval
 gate**. Its human gate is review of the resulting pull request. Neither path proves
 that a change is safe solely because an agent or build reports success.
@@ -93,8 +93,8 @@ human decision on a proposed follow-up.
 
 * If a participant cannot obtain GitHub Actions or token permissions, have them review a facilitator-owned run that was prepared and approved beforehand. Explain that they did not execute the automation themselves.
 * If Azure quota, policy, permissions, or region availability blocks provisioning, pause the Azure exercises. Use a previously approved facilitator environment for a demonstration, and record that the participant did not provision their own resources.
-* If PostgreSQL or workload identity is unavailable, inspect the failure in [the deployment exercise]({% link appmod-lab/4-deploy-application/deploy-caldova.md %}). Do not switch to synthetic data or disable readiness checks without explaining the behavior change.
+* If PostgreSQL or workload identity is unavailable, inspect the failure in [the deployment exercise]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-caldova.md %}). Do not switch to synthetic data or disable readiness checks without explaining the behavior change.
 * If an image build or upgrade takes longer than planned, continue with the architecture and review discussion while it runs, then return to the result.
-* If resources must be retained, name an owner and a deletion time. Ensure the owner has the values and access needed to finish [cleanup]({% link appmod-lab/8-cleanup/index.md %}).
+* If resources must be retained, name an owner and a deletion time. Ensure the owner has the values and access needed to finish [cleanup]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}).
 
-[Back to the workshop]({% link index.md %})
+[Back to the workshop]({{ site.baseurl }}{% link index.md %})

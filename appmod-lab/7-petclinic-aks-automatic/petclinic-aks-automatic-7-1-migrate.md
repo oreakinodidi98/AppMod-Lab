@@ -11,16 +11,23 @@ nav_order: 1
 Run Spring PetClinic with PostgreSQL, assess it with GitHub Copilot modernization,
 and implement a reviewed migration to AKS Automatic with Microsoft Entra Workload
 ID. This module uses the public Spring PetClinic app, not the todo app
-from module 01 or either Caldova implementation. The assessment screenshots are
-in this lab's `assets/images` folder.
+from module 01 or either Caldova implementation. Use the screenshots below to
+find the assessment actions and understand the report. Select a screenshot to
+view it full size.
 
-Allow 120-150 minutes, plus time to create the Azure environment. The screenshots show one
-extension version and source revision; labels, issue counts, and effort estimates
-can differ. The app is for synthetic veterinary records only.
+Allow 120-150 minutes, plus time to create the Azure environment.
+The app is for synthetic veterinary records only.
+
+> **A quick note:** The app and modernization tools keep changing, and you're
+> working with AI agents. The options, assessment results, and steps an agent
+> takes may not match the screenshots or instructions exactly. Read what the
+> agent wants to do, review its plan, and choose what makes sense for the task.
+> You don't need to match every click to move on, but keep the agreed targets
+> and approval steps, and fix any failed checks before continuing.
 
 ## 1. Prepare the environment
 
-Complete [module 00]({% link appmod-lab/0-prerequisites/index.md %}). You also need Docker Desktop with
+Complete [module 00]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/index.md %}). You also need Docker Desktop with
 Linux containers, Docker Compose, the Java Extension Pack, and the
 [GitHub Copilot modernization extension](https://marketplace.visualstudio.com/items?itemName=vscjava.migrate-java-to-azure).
 Use your own licensed GitHub account and approved Azure subscription. There is no
@@ -57,7 +64,7 @@ Review the selected checkout's README, Maven configuration, PostgreSQL profile,
 and Compose file. Sign in to Copilot in the new VS Code window. Select a model
 permitted by your organization; a particular model is not required.
 
-For deployment, use [module 03]({% link appmod-lab/3-azure-environment/index.md %})
+For deployment, use [module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %})
 to create a dedicated environment, or agree on an equivalent with your facilitator.
 You can reuse the lab cluster, registry, and PostgreSQL server, but PetClinic
 needs its own database, namespace, and reviewed identity setup. Do not import its
@@ -136,17 +143,26 @@ your selected revision. Stop the application with Ctrl+C.
 
 Open **GitHub Copilot modernization** in the activity bar.
 
-![Modernization activity-bar entry]({{ '/assets/images/GitHub_Copilot_modernization_extension.png' | relative_url }})
+[![VS Code activity bar with the GitHub Copilot modernization icon outlined in red and an arrow pointing to it.]({{ '/assets/images/GitHub_Copilot_modernization_extension.png' | relative_url }})]({{ '/assets/images/GitHub_Copilot_modernization_extension.png' | relative_url }})
+
+**What this shows:** The red box and arrow point to the modernization icon.
+Select it to open the panel for your PetClinic checkout.
 
 The quickstart panel offers assessment, runtime upgrades, Azure migration, and
 security work. Select **Start Assessment** to review assessment settings first.
 Some versions enter assessment through **Migrate to Azure**.
 
-![Modernization quickstart actions]({{ '/assets/images/quickstart.png' | relative_url }})
+[![Modernization Quickstart panel with Start Assessment above the runtime upgrade, Azure migration, and security actions.]({{ '/assets/images/quickstart.png' | relative_url }})]({{ '/assets/images/quickstart.png' | relative_url }})
+
+**What this shows:** **Start Assessment** is the first action in Quickstart.
+The other buttons are separate tasks, not steps you must run in order.
 
 Choose **Custom Assessment** when you need explicit control over scope.
 
-![Recommended and custom assessment]({{ '/assets/images/custom.png' | relative_url }})
+[![Assessment start page with Recommended Assessment on the left and Custom Assessment on the right.]({{ '/assets/images/custom.png' | relative_url }})]({{ '/assets/images/custom.png' | relative_url }})
+
+**What this shows:** The two assessment choices. Select **Custom Assessment**
+on the right so you can choose the scope and targets described below.
 
 Use these settings for the lab:
 
@@ -160,12 +176,15 @@ Use these settings for the lab:
 | Containerization | Enable to include containerization findings |
 | Security | Optional additional scope, with time reserved to review findings |
 
-![Example assessment configuration]({{ '/assets/images/customassessment.png' | relative_url }})
+[![Custom assessment form showing domains, analysis coverage, target JDK, compute services, operating systems, and the containerization checkbox.]({{ '/assets/images/customassessment.png' | relative_url }})]({{ '/assets/images/customassessment.png' | relative_url }})
 
-The screenshot includes multiple compute targets and operating systems; narrow
-them to the choices above instead of accepting every selected default. Allow the
-extension to install its assessment prerequisites when approved. Follow progress
-in Copilot Chat and the extension's output channel.
+**What this shows:** Where to set each assessment option. The example selects
+multiple compute services and operating systems, shows a sample JDK, and leaves
+**Enable Containerization** unchecked. Do not copy those selections: follow the
+table above, choose AKS and Linux, and enable containerization for this lab.
+
+Allow the extension to install its assessment prerequisites when approved.
+Follow progress in Copilot Chat and the extension's output channel.
 
 **Checkpoint:** Record the source commit, assessment configuration, report
 location, and whether the assessment succeeded. If it failed, fix the problem
@@ -173,7 +192,12 @@ before treating the report as complete.
 
 ## 4. Interpret the report and select a migration
 
-![Example assessment report]({{ '/assets/images/Assessment_Results.png' | relative_url }})
+[![PetClinic assessment report with application details, an AKS target selector, report tabs, and cloud-readiness issues grouped by criticality.]({{ '/assets/images/Assessment_Results.png' | relative_url }})]({{ '/assets/images/Assessment_Results.png' | relative_url }})
+
+**What this shows:** Application details at the top, report tabs below them,
+and the **Target Service** selector above the issue summary. The chart legend
+separates Mandatory, Potential, and Optional findings; inspect the findings
+behind those categories, not just the totals.
 
 Select **Azure Kubernetes Service (AKS)** in the report's target selector. Inspect
 the Issues tab and, when generated by full analysis, Architecture, API Contracts,
@@ -245,7 +269,7 @@ initialization for the migrated database and preserve a rollback copy.
 Confirm the subscription, cluster context, namespace permissions, database
 network path, registry pull access, and federation subject. Build in ACR and
 record an immutable image digest using the approach in the
-[deployment exercise]({% link appmod-lab/4-deploy-application/deploy-caldova.md %}),
+[deployment exercise]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-caldova.md %}),
 but use only its build and digest approach, adapted for PetClinic's single app
 image. Do not run its two-image build commands unchanged or use its Caldova-specific
 manifests, environment variables, or schema. Review a server-side dry run of
@@ -288,9 +312,9 @@ Stop the port forward with Ctrl+C. In the PetClinic checkout, run
 Remove password environment variables from the application terminal. Delete only
 your lab's database volumes or private dumps once they are no longer needed.
 
-For resources created through module 03, follow [module 08]({% link appmod-lab/8-cleanup/index.md %}) after
+For resources created through module 03, follow [module 08]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) after
 all exercises sharing the environment are finished. For a facilitator-owned
 environment, hand the owner an inventory of PetClinic resources, grants, and
 connections to remove; do not delete the shared resource group.
 
-[Next: clean up]({% link appmod-lab/8-cleanup/index.md %}) | [Workshop home]({% link index.md %})
+[Next: clean up]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) | [Workshop home]({{ site.baseurl }}{% link index.md %})

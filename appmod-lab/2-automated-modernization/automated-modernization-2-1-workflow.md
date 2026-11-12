@@ -96,5 +96,5 @@ You can explain the actual automation trigger, source branch, plan-approval
 limitation, CI result, and human review gate. A failed or skipped run is a learning
 result to investigate, not a successful modernization.
 
-[Next: create the Azure environment]({% link appmod-lab/3-azure-environment/index.md %}) |
-[Workshop home]({% link index.md %})
+[Next: create the Azure environment]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %}) |
+[Workshop home]({{ site.baseurl }}{% link index.md %})

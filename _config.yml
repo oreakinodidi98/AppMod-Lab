@@ -1,5 +1,7 @@
 title: Application Modernization Lab
 description: A workshop for modernizing applications with GitHub Copilot and operating them on Azure Kubernetes Service.
+url: https://oreakinodidi98.github.io
+baseurl: /AppMod-Lab
 remote_theme: pmarsceill/just-the-docs
 plugins:
   - jekyll-remote-theme

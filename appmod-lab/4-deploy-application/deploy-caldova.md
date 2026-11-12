@@ -8,9 +8,9 @@ nav_order: 3
 
 ## Before you start
 
-Complete [module 03]({% link appmod-lab/3-azure-environment/azure-environment-3-1-setup.md %}) and select the Python or Java
-contexts in the [Python path]({% link appmod-lab/4-deploy-application/deploy-application-4-1-python.md %}) or
-[Java path]({% link appmod-lab/4-deploy-application/deploy-application-4-2-java.md %})
+Complete [module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/azure-environment-3-1-setup.md %}) and select the Python or Java
+contexts in the [Python path]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-1-python.md %}) or
+[Java path]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-2-java.md %})
 of module 04. Use the same PowerShell terminal and keep
 your lab settings available. The commands operate only on your dedicated resource
 group, registry, cluster, and namespace.
@@ -207,5 +207,5 @@ page's HTTP response as an end-to-end success.
 ## Return to your module
 
 Keep the main terminal open so the inventory response remains available for
-comparison. Return to [Python]({% link appmod-lab/4-deploy-application/deploy-application-4-1-python.md %}#3-record-the-comparison-baseline)
-or [Java]({% link appmod-lab/4-deploy-application/deploy-application-4-2-java.md %}#3-compare-behavior).
+comparison. Return to [Python]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-1-python.md %}#3-record-the-comparison-baseline)
+or [Java]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-2-java.md %}#3-compare-behavior).

@@ -8,4 +8,4 @@ Run the modernization workflow in your workshop repository and review the result
 
 ## Exercise
 
-[Run and review the workflow]({% link appmod-lab/2-automated-modernization/automated-modernization-2-1-workflow.md %})
+[Run and review the workflow]({{ site.baseurl }}{% link appmod-lab/2-automated-modernization/automated-modernization-2-1-workflow.md %})

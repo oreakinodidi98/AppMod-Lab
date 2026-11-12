@@ -15,7 +15,9 @@ bundle install
 bundle exec jekyll serve --livereload
 ```
 
-Open the local URL printed by Jekyll. The source is compatible with GitHub Pages; configure Pages for this repository before publishing.
+Open <http://127.0.0.1:4000/AppMod-Lab/>. The `/AppMod-Lab` project path is
+configured as `baseurl` in `_config.yml`; keep its capitalization when publishing
+to GitHub Pages.
 
 ## Workshop structure
 
@@ -23,8 +25,21 @@ Each numbered folder under [`appmod-lab/`](appmod-lab/) contains a short `index.
 overview and separate exercise files. The overview's `has_children` setting and
 the exercises' `parent` and `nav_order` settings provide the expandable site navigation.
 
-Site pages use Jekyll `{% link path/to/page.md %}` tags for internal links so they
-resolve correctly with pretty URLs and the GitHub Pages project path.
+Site pages use `{{ site.baseurl }}{% link path/to/page.md %}` for internal links.
+The link tag resolves the page's pretty URL; the prefix adds the GitHub Pages
+project path. Jekyll 3 does not add that prefix to link tags automatically.
+Keep `relative_url` on image paths so they use the same project path.
+
+After changing page links, check the generated site, not just whether the source
+files exist:
+
+```powershell
+bundle exec jekyll build
+pwsh -NoProfile -File .\tests\site-links.Tests.ps1
+```
+
+The site-link workflow runs these checks on pushes and pull requests. It rejects
+links that omit the project path or point to missing generated pages or files.
 
 Module 04 contains the Python and Java deployment choices and their shared
 deployment steps. The remaining flow is operations (05), Caldova source

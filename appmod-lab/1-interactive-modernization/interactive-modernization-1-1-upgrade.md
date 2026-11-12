@@ -18,7 +18,7 @@ module, the automated workflow makes changes first, and you review the pull requ
 ## 1. Get and run the app
 
 From your repository's default branch, download the todo app using the setup
-script from [module 00]({% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}):
+script from [module 00]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}):
 
 ```powershell
 Set-Location -LiteralPath $env:LAB_APP_REPO
@@ -86,10 +86,31 @@ module uses that branch, not the upgrade branch you just created.
 
 ## 3. Run an assessment and review the plan
 
-1. Open your workshop repository (`LAB_APP_REPO`) in Visual Studio Code and sign in to GitHub Copilot.
-2. In the GitHub Copilot modernization panel, select **Start Asessment**
-3. After reviewing Assessment output select **Upgrade Runtime & Frameworks** Choose a supported Java version to upgrade to and a compatible framework version if needed. Agree on these with the customer. The newest version may not be the right choice for the app.
-4. Ask Copilot to assess the app and create a plan before making changes. Review what it will change, what should keep working, how to test it, any security issues, and how to undo the upgrade.
+Open your workshop repository (`LAB_APP_REPO`) in Visual Studio Code and sign in
+to GitHub Copilot. Select **GitHub Copilot modernization** in the activity bar.
+
+[![VS Code activity bar with the GitHub Copilot modernization icon outlined in red and an arrow pointing to it.]({{ '/assets/images/GitHub_Copilot_modernization_extension.png' | relative_url }})]({{ '/assets/images/GitHub_Copilot_modernization_extension.png' | relative_url }})
+
+**What this shows:** The red box and arrow mark the icon that opens the
+modernization panel. The screenshot uses PetClinic; keep your todo repository
+open for this module. Select a screenshot to view it full size.
+
+In the **Quickstart** panel, select **Start Assessment**.
+
+[![Modernization Quickstart panel with Start Assessment above the runtime upgrade, Azure migration, and security actions.]({{ '/assets/images/quickstart.png' | relative_url }})]({{ '/assets/images/quickstart.png' | relative_url }})
+
+**What this shows:** Assessment is the starting point. The other buttons start
+specific upgrade, migration, or security work; you do not need to run them all.
+Labels can differ between extension versions.
+
+After reviewing the assessment output, select **Upgrade Java Runtime &
+Frameworks**. Choose a supported Java version and a compatible framework version
+if needed. Agree on these with the customer. The newest version may not be the
+right choice for the app.
+
+Ask Copilot to create a plan before making changes. Review what it will change,
+what should keep working, how to test it, any security issues, and how to undo
+the upgrade.
 
 You can use this prompt and add the versions you've agreed on:
 
@@ -129,5 +150,5 @@ You should be able to explain what Copilot found, which plan you approved, what
 changed, and whether the app still works. If the upgrade didn't finish, note what
 blocked it and keep the error messages for follow-up.
 
-[Next: automated modernization]({% link appmod-lab/2-automated-modernization/index.md %}) |
-[Workshop home]({% link index.md %})
+[Next: automated modernization]({{ site.baseurl }}{% link appmod-lab/2-automated-modernization/index.md %}) |
+[Workshop home]({{ site.baseurl }}{% link index.md %})

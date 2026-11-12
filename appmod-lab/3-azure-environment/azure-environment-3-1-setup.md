@@ -16,7 +16,7 @@ the same database without a stored database password.
 > [!WARNING]
 > These steps create billable resources and make role assignments. Use only a
 > subscription, region, network design, and budget approved for this workshop.
-> Do not use an existing resource group: [cleanup]({% link appmod-lab/8-cleanup/index.md %}) deletes the
+> Do not use an existing resource group: [cleanup]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) deletes the
 > entire group and everything in it.
 
 The lab uses AKS Automatic's managed networking, a public AKS API, and a public
@@ -29,8 +29,8 @@ and access controls with the platform team before creating the cluster.
 
 ## 1. Select the subscription and lab settings
 
-Use the PowerShell terminal from [module 00]({% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}).
-Complete the [Naming page]({% link appmod-lab/0-prerequisites/prerequisite-0-2-naming.md %})
+Use the PowerShell terminal from [module 00]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}).
+Complete the [Naming page]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-2-naming.md %})
 first. Before provisioning, download the database seed, deployment template,
 and shared naming script into your own repository:
 
@@ -277,7 +277,7 @@ if (-not $env:LAB_PG_HOST) { throw 'Could not resolve the PostgreSQL host.' }
 
 If creation fails, inspect the Azure error and the partially created resources.
 Do not assume the command rolled them back. Use the same resource group for
-[cleanup]({% link appmod-lab/8-cleanup/index.md %}) when appropriate.
+[cleanup]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) when appropriate.
 
 ### Allow the cluster's outbound addresses
 
@@ -424,7 +424,7 @@ New-Item -ItemType Directory -Path $env:LAB_BUILD_ROOT | Out-Null
 "Temporary build directory: $env:LAB_BUILD_ROOT"
 ```
 
-Record this path for [cleanup]({% link appmod-lab/8-cleanup/cleanup-8-1-resources.md %}).
+Record this path for [cleanup]({{ site.baseurl }}{% link appmod-lab/8-cleanup/cleanup-8-1-resources.md %}).
 
 ## Checkpoint
 
@@ -433,5 +433,5 @@ that cluster, a seeded PostgreSQL database, and a service account federated with
 managed identity. The next module builds and deploys an application to verify the
 end-to-end connection.
 
-[Next: deploy the application to Azure]({% link appmod-lab/4-deploy-application/index.md %}) |
-[Workshop home]({% link index.md %})
+[Next: deploy the application to Azure]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/index.md %}) |
+[Workshop home]({{ site.baseurl }}{% link index.md %})

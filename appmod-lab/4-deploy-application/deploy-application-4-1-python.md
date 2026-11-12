@@ -9,7 +9,7 @@ nav_order: 1
 ## Goals
 
 Deploy the existing Python implementation to the environment from
-[module 03]({% link appmod-lab/3-azure-environment/index.md %}). Verify that the application uses the
+[module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %}). Verify that the application uses the
 seeded PostgreSQL database through Microsoft Entra Workload ID.
 
 ## 1. Understand the application
@@ -72,7 +72,7 @@ $env:LAB_WEB_REPOSITORY = "$($env:LAB_PREFIX)/python-web"
 Review the contents of both contexts before uploading them. The file list is not a
 substitute for secret scanning.
 
-Follow the [shared build and deployment exercise]({% link appmod-lab/4-deploy-application/deploy-caldova.md %}), then return
+Follow the [shared build and deployment exercise]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-caldova.md %}), then return
 here. It builds both images in your registry, deploys them to your namespace, and
 checks the actual database-backed inventory. The Python web application caches
 inventory responses for up to 30 seconds.
@@ -99,6 +99,6 @@ Both Python pods are ready, `/health` reports a connected database, `/materials`
 returns all six seeded lots, and the web page displays the inventory. You can explain
 which identity connects to PostgreSQL and why readiness is separate from liveness.
 
-[Next: operate and improve]({% link appmod-lab/5-operate-and-improve/index.md %}) |
-[Compare with Java]({% link appmod-lab/4-deploy-application/deploy-application-4-2-java.md %}) |
-[Workshop home]({% link index.md %})
+[Next: operate and improve]({{ site.baseurl }}{% link appmod-lab/5-operate-and-improve/index.md %}) |
+[Compare with Java]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-2-java.md %}) |
+[Workshop home]({{ site.baseurl }}{% link index.md %})
