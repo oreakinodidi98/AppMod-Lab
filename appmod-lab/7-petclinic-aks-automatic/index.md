@@ -1,5 +1,5 @@
 ---
-title: Module 07 - Modernize PetClinic for AKS Automatic
+title: Module 07 - Modernize to AKS Automatic
 has_children: true
 nav_order: 8
 ---

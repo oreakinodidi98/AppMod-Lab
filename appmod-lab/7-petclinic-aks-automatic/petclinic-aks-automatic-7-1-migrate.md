@@ -2,7 +2,7 @@
 title: Assess and migrate PetClinic
 description: Assess Spring PetClinic, review a passwordless PostgreSQL migration, and validate an AKS Automatic deployment.
 ms.topic: tutorial
-parent: Module 07 - Modernize PetClinic for AKS Automatic
+parent: Module 07 - Modernize to AKS Automatic
 nav_order: 1
 ---
 

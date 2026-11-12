@@ -2,7 +2,7 @@
 title: Run, assess, and modernize Caldova
 description: Run Caldova locally, then use Copilot to prepare and test its AKS migration.
 ms.topic: tutorial
-parent: Module 06 - Modernize Caldova from source
+parent: Module 06 - Modernize Caldova
 nav_order: 1
 ---
 

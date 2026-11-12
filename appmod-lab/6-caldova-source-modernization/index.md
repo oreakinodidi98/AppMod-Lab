@@ -1,5 +1,5 @@
 ---
-title: Module 06 - Modernize Caldova from source
+title: Module 06 - Modernize Caldova
 has_children: true
 nav_order: 7
 ---
