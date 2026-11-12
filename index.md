@@ -8,6 +8,13 @@ nav_exclude: true
 New here? Read [About this workshop]({{ site.baseurl }}{% link about.md %}) for an overview,
 learning resources, and the sample apps.
 
+> **A quick note:** The apps and modernization tools keep changing, and you're
+> working with AI agents. The options, assessment results, and steps an agent
+> takes may not match the screenshots or instructions exactly. Read what the
+> agent wants to do, review its plan, and choose what makes sense for the task.
+> You don't need to match every click to move on, but keep the agreed targets
+> and approval steps, and fix any failed checks before continuing.
+
 Work through application modernization from assessment to deployment:
 
 1. Assess and upgrade a Java todo application with GitHub Copilot modernization. Compare an interactive, human approved plan with an automated GitHub Actions run.
