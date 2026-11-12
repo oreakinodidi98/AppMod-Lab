@@ -8,9 +8,9 @@ nav_order: 1
 
 ## Goals
 
-In this module we will focus more on Agentic SDLC and making Application Modernisation Continuous
+In this module, we'll explore the agentic software development lifecycle (SDLC) and how we can make application modernisation continuous.
 
-Going from a once-a-decade rewrite to an always-on phase in the software development lifecycle (SDLC).
+We'll look at how teams can move from a once-a-decade rewrite to an ongoing part of software delivery, then prepare the todo app for an automated modernisation run.
 
 The idea is simple: we should not have to wait for a large migration project to keep our applications current. Modernisation can become part of how we plan, build, review, ship and operate software every day.
 
@@ -58,7 +58,7 @@ The next image shows the post-production loop. We have a system in production, a
 
 [![Post-production feedback loop showing agents, human triage, and approved actions feeding back into development.]({{ '/assets/images/post-production-loop.png' | relative_url }})]({{ '/assets/images/post-production-loop.png' | relative_url }})
 
-# 2. The gap: keeping the stack current
+## 2. The gap: keeping the stack current
 
 Agents now touch every stage:
 
@@ -110,6 +110,10 @@ A general-purpose agent does not have to spend all that time and those tokens re
 
 ### One workflow, end to end
 
+These are the stages an interactive modernisation can cover. In an automated
+run, the review point can be different: the workflow may make changes before a
+person reviews the resulting pull request.
+
 | Stage | What happens |
 | --- | --- |
 | **Assess** | Scan code and dependencies for issues and cloud blockers. Understand the current project, produce assessment results and findings, and suggest tasks with instructions. |
@@ -121,7 +125,7 @@ A general-purpose agent does not have to spend all that time and those tokens re
 
 ### Inside the plan, upgrade and validate loop
 
-The agent:
+In an interactive upgrade, the agent can:
 
 1. Drafts a plan that you can edit and approve.
 2. Applies OpenRewrite recipes.
@@ -146,7 +150,10 @@ Then we can replay that task on every application that needs it.
 
 For example, take the commit where your best engineer migrated a service to your internal logging library or an approved service. Turn that into a custom task, rather than asking every team to work out the same migration again.
 
-## 1. The starting point
+## 4. The starting point
+
+Now let's move from the concept to the workshop. We'll start with the original
+todo app and prepare a build workflow that can validate it.
 
 For this module, you'll need the original todo app on your repository's default
 branch. Choose the option that matches where you are:
@@ -212,7 +219,8 @@ files.
 
 We want to move beyond Java 8. Potential upgrade targets include **Java 11, 17 or 25**. For the walkthrough below, we use **Java 21** as a clear, consistent demo target.
 
-We will create a **Java Continuous modernization** workflow that uses the CLI tool from GitHub Copilot app modernisation.
+The next part of the exercise is intended to create a **Java Continuous modernization**
+workflow that uses the CLI tool from GitHub Copilot app modernisation.
 
 The workflow downloads and installs the CLI, then runs the modernisation step using the workflow input to guide the agentic workflow.
 
@@ -222,16 +230,24 @@ We can run it manually and provide an instruction, for example:
 - Upgrade to Spring Boot 4.
 - Upgrade to a specific Java version.
 
-These are example requests; each still needs an assessment of compatibility and validation of the resulting changes.
+These are example modernisation goals, not guaranteed workflow inputs. Check what
+the CLI and workflow accept; each goal still needs a compatibility assessment
+and validation of the resulting changes.
 
-We will set the workflow to also have a daily schedule, so modernisation can run continuously rather than waiting for someone to start a migration project. This is a recurring modernisation run, not a guarantee of application uptime.
+The intended workflow also has a daily schedule, so modernisation can run
+regularly rather than waiting for someone to start a migration project. This is
+a recurring modernisation run, not a guarantee of application uptime. Review
+and approve any scheduled runs and their costs before enabling them.
 
-## 2. Prepare authentication and CI
+## 5. Prepare authentication and CI
+
+First, prepare access for the intended modernisation workflow. Then create and
+run a separate CI workflow to establish a build and test baseline.
 
 In your repository's **Settings > Actions > General**, check that Actions are
 allowed and that workflows can create pull requests.
 
-The workflow we create will checks for two repository Actions secrets:
+The example modernisation workflow uses two repository Actions secrets:
 
 * `GH_TOKEN`: a GitHub personal access token authorized for the Copilot account used by Modernize CLI
 * `CONTINUOUS_APPMOD_GH_TOKEN`: a token authorized to write repository contents and workflows in your workshop repository so the result branch can be pushed
@@ -243,11 +259,11 @@ using your organization's approved token policy, minimum scope, and short expiry
 
 ### Create a CI workflow
 
-in this section we will use copilot to create a CI workflow to make sure the app in `src`  builds successfully with Java 8.
+We'll use Copilot to create a CI workflow that builds and tests the app in `src`.
+It reads the Java version from the app's `pom.xml`, so the baseline uses Java 8
+and later runs can use the version in the branch being tested.
 
-Run or show **Build and test** passing on `main`
-
-run the following prmpty to create your yml
+Enter the following prompt in Copilot Chat:
 
 ```txt
 Create a GitHub Actions workflow at .github/workflows/ci.yml to build and
@@ -271,8 +287,30 @@ Add short comments explaining the main steps. Show me the workflow and
 explain it before I review and commit it.
 ```
 
-if after running the prompt yaml result the file still doesnt work and youve troubleshooted it you can use the following workflow
+Review Copilot's output and save it as `.github/workflows/ci.yml`. Check the
+triggers, permissions, Java version detection, and Maven command before
+committing it. If your default branch is not `main`, update the branch filters
+to match.
 
+From the repository root, commit and push the workflow:
+
+```powershell
+git add -- .github/workflows/ci.yml
+git commit -m "Add build and test workflow"
+git push
+```
+
+In GitHub, open **Actions > Build and test**, select **Run workflow**, and
+choose your default branch. Wait for the run to finish and check that the build
+and tests pass. If they fail, inspect the logs and troubleshoot before
+continuing. Remove any secrets from errors before sharing them with Copilot.
+
+If you're still having trouble with the generated workflow after
+troubleshooting, you can use the following example for `.github/workflows/ci.yml`.
+Adjust the branch filters if needed, review the file, commit and push the
+change, then run **Build and test** again.
+
+{% raw %}
 ```yml
 name: Build and test
 
@@ -325,25 +363,156 @@ jobs:
         working-directory: src
         run: mvn --batch-mode --no-transfer-progress verify
 ```
+{% endraw %}
 
-Manually run **Build and test** on the repository's default branch and inspect its
-result. Both workflows are manual; the modernization workflow dispatches CI for
-its result branch. The modernization
-workflow configures its own JDKs; the separate Copilot setup workflow is not a
-prerequisite for its CLI job.
+The example CI workflow also runs on pushes and pull requests targeting `main`
+when files under `src` change. A modernization workflow can dispatch it
+separately for a result branch if that workflow is configured to do so. The
+example modernisation workflow configures its own JDKs; its CLI job does not
+need a separate Copilot setup workflow.
 
-## 3. Start the run
+## 6. Set up the Copilot environment
+
+Next, we'll prepare the environment for Copilot cloud agent sessions that run
+on GitHub Actions. This workflow installs the JDKs and checks the Maven setup,
+with Java 8 as the default for the original app.
+
+This is separate from the Modernize CLI workflow: it does not configure the
+CLI job or run the modernization. It also does not apply to Copilot sessions
+running in a cloud sandbox or locally in VS Code.
+
+1. In VS Code, open your workshop repository and expand `.github/workflows`.
+2. Create a file named `copilot-setup-steps.yml`. If it already exists, review
+   it before making changes instead of overwriting it.
+3. Copy the following YAML into the file and save it. If your default branch
+   is not `main`, change the `push` branch filter to your default branch.
+
+```yaml
+name: Copilot Setup Steps
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+# This workflow configures the Copilot cloud agent environment for sessions running on GitHub Actions.
+# Prepares and validates Copilot’s Java development environment so the agent can work on a Java 8 project while still having newer JDKs available for modernization tasks.
+jobs:
+# Job must be named copilot-setup-steps so GitHub Copilot recognizes it.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+# Pulls the repo code into the runner so setup validation can inspect files and tooling
+      - name: Checkout repository
+        uses: actions/checkout@v6
+# Installs Java 11, 17, 21, 25, and 8, and configures Maven toolchains for them.
+# Because Java 8 is listed last, it becomes the default JAVA_HOME and PATH Java executables.
+      - name: Install JDKs and configure Maven toolchains
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          # The last JDK becomes the default for JAVA_HOME and PATH.
+          java-version: |
+            11
+            17
+            21
+            25
+            8
+          overwrite-settings: false
+# Confirms the runner has Maven 3
+      - name: Verify runner-provided Maven 3
+        shell: bash
+        run: |
+          mvn --version | tee "$RUNNER_TEMP/maven-version.txt"
+          grep -Eq '^Apache Maven 3\.' "$RUNNER_TEMP/maven-version.txt"
+# Python script to check that Maven’s ~/.m2/toolchains.xml contains exactly one Temurin toolchain for each required JDK version: 8, 11, 17, 21, and 25.
+# Then Verifies Java 8 is the default
+      - name: Verify JDKs and Maven toolchains
+        shell: python
+        run: |
+          import os
+          from pathlib import Path
+          import re
+          import shutil
+          import subprocess
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse(Path.home() / ".m2" / "toolchains.xml").getroot()
+          for version in ("8", "11", "17", "21", "25"):
+              entries = [
+                  entry for entry in root.findall("{*}toolchain")
+                  if entry.findtext("{*}type") == "jdk"
+                  and entry.findtext("{*}provides/{*}id") == "temurin_" + version
+              ]
+              if len(entries) != 1:
+                  raise RuntimeError("Expected one Temurin toolchain for JDK " + version)
+              entry = entries[0]
+              if entry.findtext("{*}provides/{*}version") != version:
+                  raise RuntimeError("Incorrect toolchain version for JDK " + version)
+              home = Path(entry.findtext("{*}configuration/{*}jdkHome"))
+              for tool in ("java", "javac"):
+                  result = subprocess.run(
+                      [str(home / "bin" / tool), "-version"],
+                      check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                      text=True,
+                  )
+                  print(result.stdout, end="")
+                  match = re.search(r'(?:version\s+"|javac\s+)(?:1\.)?(\d+)', result.stdout)
+                  if not match or match.group(1) != version:
+                      raise RuntimeError("Incorrect " + tool + " version for JDK " + version)
+              if version == "8":
+                  if Path(os.environ["JAVA_HOME"]).resolve() != home.resolve():
+                      raise RuntimeError("JAVA_HOME must default to JDK 8")
+                  for tool in ("java", "javac"):
+                      if Path(shutil.which(tool)).resolve() != (home / "bin" / tool).resolve():
+                          raise RuntimeError(tool + " on PATH must default to JDK 8")
+```
+
+Review the file, confirm you're on your default branch, then commit and push it
+from the repository root:
+
+```powershell
+git add -- .github/workflows/copilot-setup-steps.yml
+git commit -m "Add Copilot setup steps"
+git push
+```
+
+In GitHub, open **Actions > Copilot Setup Steps** and check the run triggered by
+the push. You can also select **Run workflow** on the default branch. Confirm
+that the Maven and JDK checks pass before continuing. If they fail, inspect the
+logs and troubleshoot; remove any sensitive information before sharing errors.
+If setup fails during a Copilot session, Copilot may still begin work with an
+incomplete environment, so check the session logs as well.
+
+The file must be on the default branch for Copilot to use it. See
+[Configure the development environment for agents on GitHub Actions](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment)
+for details.
+
+## 7. Start the run
+
+> **Before continuing:** The steps to create the **Java Continuous modernization**
+> workflow have not yet been added to this module. The steps below describe the
+> intended example; wait until that workflow is available in your repository,
+> then review its triggers and behaviour before running it.
 
 1. In your repository, open **Actions > Java Continuous modernization**.
 2. Select **Run workflow** on the default branch and enter your agreed, supported upgrade target.
 3. Follow the run through CLI installation, upgrade, result-branch creation, pull-request creation, and CI dispatch.
 
-The workflow checks out the repository's **default branch**, regardless of the interactive
-branch used in module 01. It runs the CLI with `--no-tty`; there is no human
+The example workflow checks out the repository's **default branch**, regardless
+of the interactive branch used in module 01. It runs the CLI with `--no-tty`; there is no human
 approval of the generated plan before execution. Human review happens at the
 resulting pull request. The workflow does not merge it.
 
-## 4. Review the result
+## 8. Review the result
 
 Open the workflow summary and, if a change was produced, open its pull request:
 
