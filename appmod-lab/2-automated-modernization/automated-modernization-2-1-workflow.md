@@ -496,12 +496,284 @@ The file must be on the default branch for Copilot to use it. See
 [Configure the development environment for agents on GitHub Actions](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment)
 for details.
 
-## 7. Start the run
+## 7. Create the continuous modernisation workflow
 
-> **Before continuing:** The steps to create the **Java Continuous modernization**
-> workflow have not yet been added to this module. The steps below describe the
-> intended example; wait until that workflow is available in your repository,
-> then review its triggers and behaviour before running it.
+Now we'll add the workflow that runs Modernize CLI, creates a result branch and
+pull request when there are changes, and requests a CI run for that branch.
+Make sure **Build and test** passed in step 5 and that the required secrets and
+permissions are in place.
+
+> **Before you commit:** This example runs manually, on pushes that change `src`
+> on `main`, and daily at 12:00 UTC. Push and scheduled runs use the CLI's
+> `latest` default, not the Java 21 value you enter for a manual run. These runs
+> can create branches and pull requests and consume Actions minutes. Review the
+> triggers, costs, and permissions with your facilitator before enabling them.
+> If automatic runs aren't approved, remove the `push` and `schedule` sections
+> before committing so the workshop runs only when started manually.
+
+Choose either option below. Both use the same reference workflow.
+
+### Option 1: Copy the workflow
+
+In VS Code, create `.github/workflows/modernise.yml` in your workshop repository.
+Copy the reference YAML below into the file and save it. If the file already
+exists, review it before making changes instead of overwriting it.
+
+### Option 2: Use Copilot
+
+Enter this prompt in Copilot Chat, then paste the reference YAML below it:
+
+```text
+Create .github/workflows/modernise.yml using the reference workflow I provide.
+Keep its triggers, permissions, action versions, CLI commands, result branch,
+pull request, CI dispatch, and recovery steps. Explain what it does and point
+out any risks or assumptions before making changes. Do not commit or run it.
+
+Reference workflow:
+```
+
+Review the generated file against the reference. Copilot may produce different
+YAML, so check the commands, permissions, and triggers before continuing. You
+can also copy the reference directly if you prefer.
+
+### Reference workflow
+
+If your default branch is not `main`, change the `push` branch filter to your
+default branch. For manual-only use, remove the automatic triggers as described
+above. Otherwise, copy the example as shown:
+
+{% raw %}
+```yaml
+name: Java Continuous modernization
+
+on:
+  workflow_dispatch:
+    inputs:
+      upgrade_target:
+        description: 'Upgrade target (e.g., Java 21); latest uses CLI defaults'
+        required: false
+        default: latest
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+  schedule:
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: write
+# concurrency settings for the workflow, Only one run in the continuous-modernization group is coordinated at a time. Since cancel-in-progress is false, a newer run will not cancel an older one
+concurrency:
+  group: continuous-modernization
+  cancel-in-progress: false
+
+jobs:
+# Runs on an Ubuntu GitHub-hosted runner and fails if it takes longer than 60 minutes.
+  modernization:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    env:
+# Stores the requested Java upgrade target. Manual runs can override it; scheduled runs use latest
+      UPGRADE_TARGET: ${{ inputs.upgrade_target || 'latest' }}
+
+    steps:
+# Checks that the two secrets exist
+      - name: Check authentication prerequisite
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          PUSH_TOKEN: ${{ secrets.CONTINUOUS_APPMOD_GH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Add a repository Actions secret named GH_TOKEN with a PAT authorized for GitHub Copilot."
+            exit 1
+          fi
+          if [ -z "$PUSH_TOKEN" ]; then
+            echo "::error::Add CONTINUOUS_APPMOD_GH_TOKEN with repository Contents and Workflows read/write permissions."
+            exit 1
+          fi
+# Checks out the repository’s default branch with full history.
+# fetch-depth: 0 gives full Git history.
+# persist-credentials: false prevents the default checkout token from being saved in Git config, because the workflow later uses the custom PAT for pushing.
+      - name: Check out default branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+# Stores the starting commit SHA as steps.baseline.outputs.sha.
+# This is later used to identify exactly what changed after the Modernize CLI runs.
+      - name: Record starting revision
+        id: baseline
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+# Install multiple Java versions.
+# Giving the Modernize CLI and project build tooling access to several Java versions, useful when upgrading from older Java versions or testing compatibility.
+      - name: Install JDKs and configure Maven toolchains
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: |
+            11
+            17
+            21
+            25
+            8
+          overwrite-settings: false
+# Downloads and runs the Modernize CLI installer
+      - name: Download Modernize CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/microsoft/modernize-cli/main/scripts/install.sh \
+            -o "$RUNNER_TEMP/install-modernize.sh"
+          sh "$RUNNER_TEMP/install-modernize.sh"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+# Runs the actual modernization using the Modernize CLI, if a specific target was supplied it will upgrade to that version, otherwise it will upgrade to the latest version.
+      - name: Run Modernize CLI
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          if [ "$UPGRADE_TARGET" = "latest" ]; then
+            modernize upgrade --source src --no-tty
+          else
+            modernize upgrade "$UPGRADE_TARGET" --source src --no-tty
+          fi
+# configures Git, squashes all Modernize CLI changes since the starting commit into one commit, excludes workflow changes except ci.yml, then pushes the result to a new modernization branch if anything changed.
+      - name: Push changes to result branch
+        id: push_changes
+        env:
+          BASE_SHA: ${{ steps.baseline.outputs.sha }}
+          GH_TOKEN: ${{ secrets.CONTINUOUS_APPMOD_GH_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Retain CLI commits for the recovery bundle before squashing the result.
+          git branch "modernize-cli-backup-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" HEAD
+          git add -A -- .
+          git reset --soft "$BASE_SHA"
+          git restore --source="$BASE_SHA" --staged --worktree -- \
+            .github/workflows ':(exclude).github/workflows/ci.yml'
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          BRANCH_NAME="modernize-upgrade-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git switch -c "$BRANCH_NAME"
+          git commit -m "chore: apply Modernize CLI upgrades"
+          gh auth setup-git
+          git push origin "HEAD:refs/heads/$BRANCH_NAME"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "branch_name=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+# This only runs if changes were pushed. It creates a PR from the result branch into the default branch
+      - name: Create modernization pull request
+        if: steps.push_changes.outputs.changed == 'true'
+        id: pull_request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESULT_BRANCH: ${{ steps.push_changes.outputs.branch_name }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          {
+            echo "## Modernization"
+            printf '\nRequested target: %s\n' "$UPGRADE_TARGET"
+            printf '\n[Workflow run](%s/%s/actions/runs/%s)\n' \
+              "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID"
+            echo
+            echo "Includes the CLI's committed changes and any remaining working-tree changes."
+            echo "Only ci.yml changes are retained under .github/workflows."
+            echo "Review the diff, CLI reports, and build/test results before merging."
+          } > "$RUNNER_TEMP/modernize-pr-body.md"
+          PR_URL=$(gh pr create --repo "$GITHUB_REPOSITORY" \
+            --base "$BASE_BRANCH" --head "$RESULT_BRANCH" \
+            --title "chore: modernize application ($UPGRADE_TARGET)" \
+            --body-file "$RUNNER_TEMP/modernize-pr-body.md")
+          echo "url=$PR_URL" >> "$GITHUB_OUTPUT"
+# Only runs if changes were created. Manually triggers the repo’s ci.yml workflow against the modernization branch.
+# This  workflow does not directly build/test the project itself; it delegates validation to the existing CI workflow
+      - name: Run build and tests on result branch
+        if: steps.push_changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESULT_BRANCH: ${{ steps.push_changes.outputs.branch_name }}
+        run: gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$RESULT_BRANCH"
+# Writes a summary to the GitHub Actions run page
+      - name: Display results summary
+        if: always() && steps.push_changes.outcome == 'success'
+        env:
+          CHANGED: ${{ steps.push_changes.outputs.changed }}
+          RESULT_BRANCH: ${{ steps.push_changes.outputs.branch_name }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          PR_URL: ${{ steps.pull_request.outputs.url }}
+        run: |
+          {
+            echo "## Modernization results"
+            printf '\nTarget: %s\n' "$UPGRADE_TARGET"
+            if [ "$CHANGED" = "true" ]; then
+              printf '\nResult branch: %s\n' "$RESULT_BRANCH"
+              printf '\n[View branch](%s/%s/tree/%s)\n' \
+                "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$RESULT_BRANCH"
+              if [ -n "$PR_URL" ]; then
+                printf '\n[Pull request](%s)\n' "$PR_URL"
+              else
+                echo
+                echo "Pull request creation failed; the result branch is preserved."
+                printf '\n[Create pull request](%s/%s/compare/%s...%s)\n' \
+                  "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$BASE_BRANCH" "$RESULT_BRANCH"
+              fi
+              echo
+              echo "Review the changes and run build/tests for the upgraded stack before merging."
+            else
+              echo
+              echo "No net changes relative to the starting revision; no result branch or PR was created."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+# Creates a Git bundle containing all local refs and commits.
+# This is a recovery artifact in case something useful existed locally but was not pushed or exposed through the PR.
+      - name: Preserve local commits
+        if: always() && steps.baseline.outcome == 'success'
+        run: git bundle create "$RUNNER_TEMP/modernize-result.bundle" --all
+# Uploads the Modernize CLI logs and the recovery bundle as artifacts.
+      - name: Upload Modernize CLI logs and recovery bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: modernize-logs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ~/.modernize/logs/
+            ${{ runner.temp }}/modernize-result.bundle
+          if-no-files-found: warn
+          retention-days: 7
+```
+{% endraw %}
+
+### Review and commit
+
+Review `.github/workflows/modernise.yml`, including the CLI installer, secret
+names, permissions, and triggers. The workflow runs without interactive plan
+approval and can create a branch and pull request. Do not commit until you
+understand and approve that behaviour.
+
+From your repository's default branch, commit and push the file:
+
+```powershell
+git add -- .github/workflows/modernise.yml
+git commit -m "Add continuous modernization workflow"
+git push
+```
+
+Confirm that **Java Continuous modernization** appears under **Actions**. If
+you enabled automatic triggers, check for any runs that have already started
+before starting another one.
+
+## 8. Start the run
+
+With the baseline checked and the workflows in place, run modernisation and
+review the result. 
 
 1. In your repository, open **Actions > Java Continuous modernization**.
 2. Select **Run workflow** on the default branch and enter your agreed, supported upgrade target.
@@ -512,7 +784,7 @@ of the interactive branch used in module 01. It runs the CLI with `--no-tty`; th
 approval of the generated plan before execution. Human review happens at the
 resulting pull request. The workflow does not merge it.
 
-## 8. Review the result
+## 9. Review the result
 
 Open the workflow summary and, if a change was produced, open its pull request:
 
