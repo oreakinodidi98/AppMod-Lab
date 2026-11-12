@@ -14,6 +14,10 @@ We will be using the todo application in your own workshop repository.
 
 In this module, you wil review and approve the plan before Github Copilot makes changes. In the next module, the automated workflow makes changes first, and you review the pull request.
 
+> **Note:** The GitHub Copilot modernization extension is regularly updated with
+> new features and improvements. Its screens and labels may look different from
+> the screenshots in this lab, depending on the version you're using.
+
 ## Why start with a assessment?
 
 An upgrade changes a dependency and runtime environment, not the application's purpose. The todo list is intentionally small so you can focus on the engineering question: can the application move to a supported Java and framework target while preserving the behavior users rely on? A successful build establishes that the code compiles and packages; creating, completing, and deleting a todo checks a visible behavior that a build alone cannot establish.
@@ -122,9 +126,7 @@ module uses that branch, not the upgrade branch you just created.
 
 ## 3. Run an assessment and review the plan
 
-Open your workshop repository in Visual Studio Code. Make sure you're
-[signed in to Copilot]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}#sign-in-to-github-copilot),
-then select **GitHub Copilot modernization** in the activity bar.
+Open your workshop repository in Visual Studio Code. Make sure you're [signed in to Copilot]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}#sign-in-to-github-copilot), then select **GitHub Copilot modernization** in the activity bar.
 
 [![VS Code activity bar with the GitHub Copilot modernization icon outlined in red and an arrow pointing to it.]({{ '/assets/images/GitHub_Copilot_modernization_extension.png' | relative_url }})]({{ '/assets/images/GitHub_Copilot_modernization_extension.png' | relative_url }})
 
@@ -136,15 +138,111 @@ In the **Quickstart** panel, select **Start Assessment**.
 
 **What this shows:** Assessment is the starting point. The other buttons start specific upgrade, migration, or security work; you do not need to run them all. Labels can differ between extension versions.
 
-
 [![Assessment options showing Recommended Assessment, Custom Assessment, and a link to import a report.]({{ '/assets/images/Assessmentoptions.png' | relative_url }})]({{ '/assets/images/Assessmentoptions.png' | relative_url }})
 
 **What this shows:** You can use a recommended assessment, choose a custom
 assessment, or import an existing report. Select a screenshot to view it full size.
 
+### Understand the assessment options
+
+Before you start, here's what each option does:
+
+* **Recommended Assessment:** Run a new assessment by choosing areas to review,
+  such as Java upgrades, cloud readiness, or security. This is the option we'll
+  use for the todo app.
+
+* **Custom Assessment:** Run a new assessment with more control over the scope
+  and settings, such as the target runtime, Azure service, and analysis depth.
+  A full analysis can take longer. You'll try this option with PetClinic in
+  [module 07]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}).
+
+* **Import a report:** Bring in an existing assessment instead of running it
+  again. This is useful when an app has already been assessed or when another
+  developer has shared a report with you.
+
+For example, the extension can import:
+
+* An AppCAT CLI assessment report, such as `report.json`.
+* A report exported from GitHub Copilot modernization.
+* An application context file from Dr. Migrate.
+
+To import a report, select **Import** on the assessment reports page. You can
+also open the VS Code Command Palette with **Ctrl+Shift+P** and search for
+**Import Assessment Report**.
+
+Once imported, you can review its findings and proposed solutions. An exported
+GitHub Copilot modernization report can also share the assessment and migration
+decisions with another developer. Importing loads an existing report; it does
+not run a new assessment, so check that the report is relevant and up to date.
+
+You don't need to import a report for this exercise. For more information, see
+[Working with assessments](https://learn.microsoft.com/azure/developer/java/migration/migrate-github-copilot-app-modernization-for-java-working-with-assessment).
+
+### Assess the todo app
+
+1. Select **Recommended Assessment**.
+2. Follow the prompts to assess the todo app in the `src` folder. Select
+   **Java Upgrade** and **Cloud Readiness**. Cloud Readiness measures how ready
+   the app is for Azure.
+
+   You'll also see a **Security** option, which identifies security issues using
+   ISO 5055 and recommends fixes. You can use it with either a recommended or
+   custom assessment. We'll leave it unchecked in this module, but it's worth
+   knowing about when a customer asks about security.
+
+   [![Recommended Assessment options with Java Upgrade and Cloud Readiness selected and Security unchecked.]({{ '/assets/images/recommendedassessmentoptions.png' | relative_url }})]({{ '/assets/images/recommendedassessmentoptions.png' | relative_url }})
+
+   **What this shows:** The assessment options selected for this module. Select the
+   screenshot to view it full size.
+
+3. Select **OK** to start the assessment. It may take around 30 seconds to appear as running and a couple of minutes to finish.
+4. Review the report and note any findings or errors. If it fails, investigate before continuing.
+
+### Overview of the assessment
+
+GitHub Copilot Modernization consumes the assessment results reviews scan findings and generates targeted recommendations to prepare the application for target service and migration to Azure.
+
+- **Target Compute Service**: the destination runtime or Azure compute service.
+- **Assesment Domains**: the modernization capability you want to focus on.
+- **Analysis Coverage**: how deep the analysis should run.
+- **Target os**: operating system guidance (Windows or Linux). For this lab, you are not focusing on OS-specific guidance.
+
+**Target Compute Service**
+
+| Target | Description   |
+|--|--|
+| azure-aks | Best practices for deploying an app to Azure Kubernetes Service.|
+| azure-appservice | Best practices for deploying an app to Azure App Service. |
+| azure-container-apps | Best practices for deploying an app to Azure Container Apps. |
+
+
+**Target Runtime**
+
+| Runtime | Description |
+|--|--|
+| openjdk11 | Best practices for migrating to OpenJDK 11. |
+| openjdk17 | Best practices for migrating to OpenJDK 17. |
+| openjdk21 | Best practices for migrating to OpenJDK 21. |
+| openjdk25 | Best practices for migrating to OpenJDK 25. |
+
+**Analysis modes**
+
+| Mode | Description |
+|--------|---------|
+| issue-only  | analyze source code to only detect issues |
+| **source-only** | Fast analysis that examines source code only. |
+| **full** | Full analysis: inspects source code and scans dependencies (slower, more thorough). |
+
+> [!TIP]
+> **Where you change these options**
+>
+> You can customize this report by selecting the Custom Assesment tab to change targets and modes. 
+> 
+> [![Custom assessment options for assessment domains, analysis coverage, target runtime, and cloud readiness.]({{ '/assets/images/customassessment.png' | relative_url }})]({{ '/assets/images/customassessment.png' | relative_url }})
+> 
+> If you want a broader scan (including dependency checks), change `mode` to `full`, or add/remove entries under `target runtime` to focus recommendations on a specific runtime or Azure compute service.
+
 Assessment and implementation are different decisions. Assessment gathers facts about the code, dependencies, target compatibility, and tests; a plan proposes changes based on those facts. 
-
-
 
 Review the plan before execution because the agent cannot decide which compatibility tradeoffs your users, organization, or release policy will accept. A supported target is not necessarily a drop-in target: runtime, framework, plugins, and libraries must work together, and the newest available version is not a compatibility strategy.
 
