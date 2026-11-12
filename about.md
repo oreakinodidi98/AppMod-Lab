@@ -82,8 +82,6 @@ Maintained by [@oreakinodidi98](https://github.com/oreakinodidi98).
 Suggestions and contributions are welcome through the
 [workshop repository](https://github.com/oreakinodidi98/AppMod-Lab).
 
-The workshop layout is inspired by the
-[Azure API Management guided lab](https://github.com/Azure/apim-lab).
 The PetClinic exercise uses the Spring community's sample application.
 
 ## Trademarks
