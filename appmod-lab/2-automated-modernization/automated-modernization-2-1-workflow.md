@@ -9,23 +9,40 @@ nav_order: 1
 ## Goals
 
 Compare the interactive upgrade with a GitHub Actions workflow in your own
-workshop repository. Inspect
-the resulting branch, pull request, and build evidence without merging the change.
+workshop repository. Inspect the resulting branch, pull request, and build evidence without merging the change.
 
 ## 1. Add the workflows
 
 Finish module 01 first: your repository's default branch must contain the original
-`src` app, committed and pushed before the interactive upgrade. Save your work on
-the interactive branch, then switch to your default branch:
+`src` app, committed and pushed before the interactive upgrade.
+
+Use the PowerShell terminal from the prerequisites. If you opened a new terminal,
+the workshop variables are not carried over. In your cloned repository, repeat
+the commands in [Create your workshop repository]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}#create-your-workshop-repository)
+to set `LAB_APP_REPO`, then repeat [Get the setup command]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}#get-the-setup-command)
+to download the script, verify its hash, and review it.
+
+Save your work on the interactive branch, then return to the repository root and
+switch to your default branch. The example uses `main`; change it if your
+default branch has a different name.
 
 ```powershell
 Set-Location -LiteralPath $env:LAB_APP_REPO
 git status --short
-$defaultBranch = Read-Host 'Name of your repository default branch'
+$defaultBranch = "main"
 git switch $defaultBranch
+```
+
+Confirm that Git switched branches successfully before downloading the workflows:
+
+```powershell
 & $env:LAB_SETUP -Module automation
 git status --short
 ```
+
+If PowerShell says the expression after `&` is not valid, `LAB_SETUP` may not be
+set in this terminal. Repeat **Get the setup command** above, then try the
+download again from the repository root.
 
 The setup adds only `ci.yml` and `modernise.yml`. Both are set to run **manually**;
 it does not add the original deployment or image-signing workflows. Review both

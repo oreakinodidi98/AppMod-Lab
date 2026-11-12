@@ -246,18 +246,15 @@ first; cloud readiness findings may change after the upgrade.
 
 After reviewing the assessment output, select **Upgrade Java Runtime &
 Frameworks**. Choose a supported Java version and a compatible framework version
-if needed. Agree on these with the customer. The newest version may not be the
-right choice for the app.
+if needed from the upgrade scope. Agree on these with the customer. The newest version may not be the right choice for the app.
 
 [![Copilot presenting options to upgrade Java alone or upgrade Java and Spring Boot together.]({{ '/assets/images/upgrade_java_options.png' | relative_url }})]({{ '/assets/images/upgrade_java_options.png' | relative_url }})
 
 **What this shows:** An example of the upgrade scope options Copilot may offer.
 Choose the scope that fits your app. Select the screenshot to view it full size.
 
-Ask Copilot to create a plan before making changes. Review what it will change,
-what should keep working, how to test it, any security issues, and how to undo
-the upgrade. Check that the runtime, framework, plugins, and libraries are
-compatible, and keep the plan focused on the agreed target.
+You can ask Copilot to create a plan before making upgrade changes. Review what it will change, what should keep working, how to test it, any security issues, and how to undo
+the upgrade. Check that the runtime, framework, plugins, and libraries are compatible, and keep the plan focused on the agreed target.
 
 You can use this prompt and add the versions you've agreed on:
 
