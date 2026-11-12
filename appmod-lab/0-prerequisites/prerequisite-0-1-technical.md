@@ -61,6 +61,22 @@ Install or configure any missing tool using your organization's approved process
 The Java version displayed by Maven must match the JDK needed for each exercise; you
 will select it in the module rather than rely on a workstation-specific path.
 
+## Sign in to GitHub Copilot
+
+Use your own GitHub account with Copilot access. If you're already signed in to
+Copilot in VS Code, you can skip these steps.
+
+1. Open [GitHub](https://github.com) in your browser and sign in to your account.
+2. In VS Code, select the **Accounts** icon and choose **Sign in to use Copilot**.
+3. Choose the sign-in option for your account and follow the prompts to authorize VS Code. Follow your organization's sign-in process if you use a managed account.
+4. Open Copilot Chat and confirm you can use it. Choose a model permitted by your organization; this workshop does not require a specific model.
+
+[![GitHub Copilot sign-in window with GitHub, Google, Apple, and GHE.com options.]({{ '/assets/images/signintogithub.png' | relative_url }})]({{ '/assets/images/signintogithub.png' | relative_url }})
+
+**What this shows:** An example GitHub Copilot sign-in prompt. Your options may
+look different depending on your account and VS Code version. Select the image
+to view it full size.
+
 ## Azure access and costs
 
 Use a non-production Azure subscription in which you are authorized to create and
