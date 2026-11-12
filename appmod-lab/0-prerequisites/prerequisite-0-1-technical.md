@@ -15,19 +15,34 @@ Create a repository for your work and check the access needed to provision a tem
 You need:
 
 * A GitHub account with GitHub Copilot enabled and permission to create a repository. The automated exercise also needs GitHub Actions and the token permissions described in [module 02]({{ site.baseurl }}{% link appmod-lab/2-automated-modernization/index.md %}).
-* Visual Studio Code with GitHub Copilot and the [GitHub Copilot modernization extension](https://marketplace.visualstudio.com/items?itemName=vscjava.migrate-java-to-azure).
-* A Windows workstation with Git, PowerShell 7.4 or later, Maven 3, a Java 8 JDK, and the JDK for your chosen upgrade target. Install JDK 17 as well if you choose the Java path in module 04.
-* Azure CLI 2.86.0 or later, `kubectl`, `kubelogin`, `psql`, and `tar` available on your command path.
+
+* [Visual Studio Code](https://code.visualstudio.com/download) with [GitHub Copilot](https://code.visualstudio.com/docs/setup/copilot) and the [GitHub Copilot modernization extension](https://marketplace.visualstudio.com/items?itemName=vscjava.migrate-java-to-azure).
+
+* A Windows workstation with:
+    * [Git for Windows](https://git-scm.com/install/windows).
+    * [PowerShell 7.4 or later](https://learn.microsoft.com/powershell/scripting/install/install-powershell-on-windows), not Windows PowerShell 5.1.
+    * [Maven 3](https://maven.apache.org/download.cgi). Choose a Maven 3 binary download, not Maven 4.
+
+    * A [Java 8 JDK](https://adoptium.net/temurin/releases/?version=8&os=windows&package=jdk) and a [JDK for your chosen upgrade target](https://adoptium.net/temurin/releases/?os=windows&package=jdk). Select the agreed version and a **JDK**, not a JRE. Install [JDK 17](https://adoptium.net/temurin/releases/?version=17&os=windows&package=jdk) as well if you choose the Java path in module 04.
+
+* These command-line tools, available on your command path:
+    * [Azure CLI 2.86.0 or later](https://learn.microsoft.com/cli/azure/install-azure-cli-windows).
+    * [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/) and [kubelogin](https://azure.github.io/kubelogin/install.html#windows).
+
+    * [PostgreSQL command-line tools, including psql](https://www.postgresql.org/download/windows/). Select **Command Line Tools** in the Windows installer and add its `bin` folder to your `PATH`.
+
+    * [tar](https://learn.microsoft.com/windows/tar/), which is included with Windows; no separate download is needed.
+
 * Access to the public dependencies and base images used by the applications, subject to your organization's network and software policies.
 
-The examples use PowerShell and Windows paths on your own workstation. A local
-Docker installation is not needed for module 04: ACR builds the container images.
+The examples use PowerShell and Windows paths on your own workstation.
 You will need Docker and a local PostgreSQL server for the later modules below.
 
 Check these tools before the later modules:
 
-* [Module 06]({{ site.baseurl }}{% link appmod-lab/6-caldova-source-modernization/index.md %}) needs Python 3.11 or later and a local PostgreSQL 15 or later server.
-* [Module 07]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}) needs Docker Desktop with Linux containers, Docker Compose, and a JDK compatible with the selected PetClinic version. Check the modernization extension's own JDK requirements too.
+* [Module 06]({{ site.baseurl }}{% link appmod-lab/6-caldova-source-modernization/index.md %}) needs [Python 3.11 or later](https://www.python.org/downloads/windows/) and a local [PostgreSQL 15 or later server](https://www.postgresql.org/download/windows/).
+
+* [Module 07]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}) needs [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) with Linux containers, [Docker Compose](https://docs.docker.com/compose/install/) (included with Docker Desktop), the [Java Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack), and a [JDK compatible with the selected PetClinic version](https://adoptium.net/temurin/releases/?os=windows&package=jdk). Check the modernization extension's own JDK requirements too.
 
 Check the commands in a new PowerShell session:
 
