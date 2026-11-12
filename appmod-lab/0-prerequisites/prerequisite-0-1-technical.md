@@ -95,26 +95,43 @@ policies. AKS, database, registry, networking, and build usage are billable.
 
 ## Create your workshop repository
 
-1. On GitHub, create a new, empty repository in an account or organization where you can run the workshop. Add a README when creating it so it has a default branch.
-2. Clone **your new repository** to your workstation with Git or GitHub Desktop, then open it in Visual Studio Code.
-3. Keep your repository's default branch for the automated exercise. Module 01 uses a separate branch for the interactive upgrade.
+1. On GitHub, create a new repository in an account or organization where you can run the workshop. Add a README when creating it so it has a default branch.
 
-In PowerShell, enter the path to your repository. Keep this terminal open for the
-workshop; the lab settings are session variables.
+2. Copy your new repository's URL from **Code > HTTPS**. In Visual Studio Code, open the Command Palette with **Ctrl+Shift+P**, select **Git: Clone**, and paste the URL. Choose where to save it, then open the cloned repository when prompted. If you have already cloned your repository, open that folder instead.
+
+3. Open a new terminal in VS Code with **Terminal > New Terminal** and select **PowerShell 7**. The terminal needs to be inside your cloned repository, not just on the GitHub website. If needed, use `Set-Location` to move into its folder:
+
+   ```powershell
+   Set-Location -LiteralPath 'C:\path\to\your\workshop-repository'
+   ```
+
+   Replace the example path with the folder on your computer. For example, if
+   your prompt already shows `PS C:\Users\oreakinodidi\AppMod-Student>`, you
+   are already in that folder and can skip this command.
+
+Keep your repository's default branch for the automated exercise. Module 01 uses
+a separate branch for the interactive upgrade.
+
+Now run the following in that terminal. You do not need to enter a path when
+prompted. Git finds the repository's top-level folder and the command saves it
+as `LAB_APP_REPO` for the later exercises.
 
 ```powershell
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
-$env:LAB_APP_REPO = (Resolve-Path -LiteralPath (Read-Host 'Full path to your workshop repository')).Path
-Set-Location -LiteralPath $env:LAB_APP_REPO
-if ((git rev-parse --show-toplevel).Trim() -ne $env:LAB_APP_REPO.Replace('\', '/')) {
-    throw 'Select the root of your workshop repository.'
-}
+$env:LAB_APP_REPO = $null
+$repoRoot = git rev-parse --show-toplevel
+Set-Location -LiteralPath $repoRoot
+$env:LAB_APP_REPO = (Get-Location).Path
 git remote -v
 git status --short
 ```
 
-Confirm the push remote points to **your** repository. Do not continue with unrelated changes; use a separate clone if needed.
+Check that the `origin` push URL shown points to **your** new GitHub repository,
+and that `git status` shows no unrelated changes. If Git says this is not a
+repository, open the cloned folder in VS Code and try again. If the remote points
+somewhere else or there are unrelated changes, stop and use the correct clone.
+Keep this terminal open for the workshop; the lab settings are session variables.
 
 ## Get the setup command
 
@@ -137,8 +154,9 @@ In each module, run its `& $env:LAB_SETUP -Module ...` command from the root of
 your repository. Review and commit the downloaded files before continuing. The
 setup command never commits or pushes for you. If a download is interrupted, read
 the error and check `git status` before removing any partial files and retrying.
-If you restart PowerShell, set `LAB_APP_REPO` again and repeat the script download
-and hash check. Never record tokens or passwords in your notes.
+If you restart PowerShell, open your cloned repository in the new terminal, rerun
+the commands above to set `LAB_APP_REPO`, then repeat the script download and hash
+check. Never record tokens or passwords in your notes.
 
 ## Checkpoint
 

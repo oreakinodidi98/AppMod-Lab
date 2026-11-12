@@ -103,13 +103,16 @@ Set-Location CaldovaClinicalApi
 Percent-encode special characters in the URL's username and password. Use only a
 local development account. Do not paste credentials into chat or commit them.
 
-In a second PowerShell terminal, enter your repository path again. Settings from
-the first terminal are not copied into a new one:
+Open a second PowerShell terminal inside your cloned workshop repository.
+Settings from the first terminal are not copied into a new one, so find and
+save the repository path again before starting the web app:
 
 ```powershell
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
-$env:LAB_APP_REPO = (Resolve-Path -LiteralPath (Read-Host 'Full path to your workshop repository')).Path
+$env:LAB_APP_REPO = $null
+$repoRoot = git rev-parse --show-toplevel
+$env:LAB_APP_REPO = (Resolve-Path -LiteralPath $repoRoot).Path
 Set-Location -LiteralPath (Join-Path $env:LAB_APP_REPO 'Scenario1App')
 $env:CALDOVA_API_URL = 'http://127.0.0.1:8000'
 CaldovaClinicalApi\.venv\Scripts\python.exe -m streamlit run CaldovaClinicalWeb\app.py
