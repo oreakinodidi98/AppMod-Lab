@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Caldova Clinical | Material inventory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/caldova.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="brand" href="/">Caldova <span>Clinical</span></a>
+        <p class="nav-label">Workspace</p>
+        <nav aria-label="Workspace navigation">
+            <a href="#">Overview</a>
+            <a class="active" href="/">Material inventory</a>
+            <a href="#">Clinical studies</a>
+            <a href="#">Quality review</a>
+            <a href="#">Locations</a>
+            <a href="#">Access control</a>
+        </nav>
+        <p class="environment"><span></span> Validated environment</p>
+    </aside>
+
+    <main>
+        <header class="page-header">
+            <p class="eyebrow">Clinical operations</p>
+            <h1>Material inventory</h1>
+            <p>Track clinical materials, storage locations, and supply status across active studies.</p>
+        </header>
+
+        <section class="error-panel" th:if="${error}" role="alert">
+            <strong>Inventory unavailable</strong>
+            <span th:text="${error}">The clinical API is unavailable.</span>
+        </section>
+
+        <th:block th:unless="${error}">
+            <section class="metrics" aria-label="Inventory summary">
+                <article><span>Cataloged materials</span><strong th:text="${catalogedCount}">0</strong></article>
+                <article><span>Ready to dispense</span><strong th:text="${readyCount}">0</strong></article>
+                <article><span>Need attention</span><strong th:text="${attentionCount}">0</strong></article>
+                <article><span>Inventory state</span><strong>Verified</strong></article>
+            </section>
+
+            <div class="validation"><span aria-hidden="true">&#10003;</span> Last inventory reconciliation completed today at 08:42.</div>
+
+            <form class="filters" method="get" action="/">
+                <label>
+                    <span class="sr-only">Search inventory</span>
+                    <input name="query" type="search" placeholder="Search materials, category, or lot" th:value="${query}">
+                </label>
+                <label>
+                    <span class="sr-only">Filter by status</span>
+                    <select name="status" onchange="this.form.submit()">
+                        <option th:selected="${status == 'All statuses'}">All statuses</option>
+                        <option th:selected="${status == 'In stock'}">In stock</option>
+                        <option th:selected="${status == 'Low stock'}">Low stock</option>
+                        <option th:selected="${status == 'Reorder'}">Reorder</option>
+                    </select>
+                </label>
+                <button type="submit">Search</button>
+            </form>
+
+            <p class="result-count"><strong th:text="${resultCount}">0</strong> results</p>
+
+            <section class="empty-state" th:if="${#lists.isEmpty(materials)}">
+                No materials match the current search and status filters.
+            </section>
+
+            <section class="material-grid" th:unless="${#lists.isEmpty(materials)}">
+                <article class="material-card" th:each="material : ${materials}">
+                    <div class="material-image">
+                        <img th:src="${material.imageUrl}" th:alt="${material.name}">
+                        <span class="stock-badge" th:classappend="${material.statusClass}" th:text="${material.status}">In stock</span>
+                    </div>
+                    <div class="material-body">
+                        <p class="material-category" th:text="${material.category}">Category</p>
+                        <h2 th:text="${material.name}">Material</h2>
+                        <p class="quantity"><strong th:text="${#numbers.formatInteger(material.quantity, 1, 'COMMA')}">0</strong> <span th:text="|${material.unit} available|">units available</span></p>
+                        <dl>
+                            <div><dt>Lot</dt><dd th:text="${material.lotNumber}">Lot</dd></div>
+                            <div><dt>Expires</dt><dd th:text="${material.formattedExpiryDate}">Date</dd></div>
+                            <div><dt>Location</dt><dd th:text="${material.location}">Location</dd></div>
+                        </dl>
+                    </div>
+                    <div class="card-action">View material <span aria-hidden="true">&rarr;</span></div>
+                </article>
+            </section>
+        </th:block>
+    </main>
+</div>
+</body>
+</html>

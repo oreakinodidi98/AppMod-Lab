@@ -1,0 +1,11 @@
+server:
+  port: ${SERVER_PORT:8501}
+
+spring:
+  application:
+    name: caldova-clinical-web
+  thymeleaf:
+    cache: false
+
+caldova:
+  api-url: ${CALDOVA_API_URL:http://127.0.0.1:8000}

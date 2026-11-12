@@ -98,6 +98,14 @@ terraform.rc
 
 .envrc
 
+# Local demo artifacts copied with sample applications
+assets/**/.tmp-aks-check/
+assets/**/.tmp-aks-kubeconfig
+assets/**/__pycache__/
+assets/Python_app/CaldovaClinicalApi/--scope
+assets/Java_app/JAVA_DEPLOYMENT_DEMO.md
+assets/Python_app/python_runlocally.md
+
 # Jekyll
 _site/
 .sass-cache/

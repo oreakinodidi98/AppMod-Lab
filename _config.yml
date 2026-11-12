@@ -30,3 +30,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor/
+  - assets/src/
+  - assets/Python_app/
+  - assets/Java_app/
+  - assets/Scenario1App/

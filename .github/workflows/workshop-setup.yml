@@ -1,0 +1,40 @@
+name: Workshop setup tests
+
+on:
+  push:
+    paths:
+      - 'assets/scripts/**'
+      - 'assets/src/**'
+      - 'assets/Python_app/**'
+      - 'assets/Java_app/**'
+      - 'assets/Scenario1App/**'
+      - 'assets/k8s/caldova.yaml'
+      - 'appmod-lab/0-prerequisites/prerequisite-0-1-technical.md'
+      - 'appmod-lab/0-prerequisites/prerequisite-0-2-naming.md'
+      - 'tests/get-lab-files.Tests.ps1'
+      - '.github/workflows/workshop-setup.yml'
+  pull_request:
+    paths:
+      - 'assets/scripts/**'
+      - 'assets/src/**'
+      - 'assets/Python_app/**'
+      - 'assets/Java_app/**'
+      - 'assets/Scenario1App/**'
+      - 'assets/k8s/caldova.yaml'
+      - 'appmod-lab/0-prerequisites/prerequisite-0-1-technical.md'
+      - 'appmod-lab/0-prerequisites/prerequisite-0-2-naming.md'
+      - 'tests/get-lab-files.Tests.ps1'
+      - '.github/workflows/workshop-setup.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test workshop downloads
+        shell: pwsh
+        run: ./tests/get-lab-files.Tests.ps1

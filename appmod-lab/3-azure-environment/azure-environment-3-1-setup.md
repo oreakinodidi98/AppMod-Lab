@@ -16,7 +16,7 @@ the same database without a stored database password.
 > [!WARNING]
 > These steps create billable resources and make role assignments. Use only a
 > subscription, region, network design, and budget approved for this workshop.
-> Do not use an existing resource group: [cleanup]({% link appmod-lab/7-cleanup/index.md %}) deletes the
+> Do not use an existing resource group: [cleanup]({% link appmod-lab/8-cleanup/index.md %}) deletes the
 > entire group and everything in it.
 
 The lab uses AKS Automatic's managed networking, a public AKS API, and a public
@@ -30,23 +30,21 @@ and access controls with the platform team before creating the cluster.
 ## 1. Select the subscription and lab settings
 
 Use the PowerShell terminal from [module 00]({% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}).
-Keep `LAB_REPO` pointing to `AppMod-Lab` and `LAB_APP_REPO` pointing to your
-`AKS_AppMod_Demos` fork. Before provisioning, confirm that the source needed for
-database initialization and image builds is available:
+Complete the [Naming page]({% link appmod-lab/0-prerequisites/prerequisite-0-2-naming.md %})
+first. Before provisioning, download the database seed, deployment template,
+and shared naming script into your own repository:
 
 ```powershell
-foreach ($sourcePath in @('src\pom.xml', 'Python_app\CaldovaClinicalApi\db\init.sql', 'Java_app\CaldovaClinicalApiJava\pom.xml')) {
-    if (-not $env:LAB_APP_REPO -or -not (Test-Path -LiteralPath (Join-Path $env:LAB_APP_REPO $sourcePath))) {
-        throw 'Restore LAB_APP_REPO to your AKS_AppMod_Demos fork before provisioning.'
-    }
-}
+Set-Location -LiteralPath $env:LAB_APP_REPO
+& $env:LAB_SETUP -Module environment
+git status --short
 ```
 
-The following
-setting makes native-command failures stop subsequent PowerShell commands:
+Review the three files. You will get your chosen application's files in module 04.
+The following setting makes native-command failures stop subsequent commands:
 
 ```powershell
-Set-Location -LiteralPath $env:LAB_REPO
+Set-Location -LiteralPath $env:LAB_APP_REPO
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
 
@@ -74,12 +72,8 @@ and the available PostgreSQL options with your facilitator.
 
 ```powershell
 az account list-locations --query "[].{Name:name,Display:displayName}" --output table
-$env:LAB_LOCATION = Read-Host 'Approved Azure region'
+if (-not $env:LAB_LOCATION) { throw 'Choose the lab naming values in prerequisites first.' }
 az postgres flexible-server list-skus --location $env:LAB_LOCATION --output table
-$env:LAB_PREFIX = Read-Host 'Short lab prefix: 3 to 10 lowercase letters or digits, starting with a letter'
-if ($env:LAB_PREFIX -cnotmatch '^[a-z][a-z0-9]{2,9}$') {
-    throw 'The lab prefix must be 3 to 10 lowercase letters or digits and start with a letter.'
-}
 
 $env:LAB_PG_TIER = Read-Host 'Approved PostgreSQL tier: Burstable, GeneralPurpose, or MemoryOptimized'
 $env:LAB_PG_SKU = Read-Host 'Approved PostgreSQL SKU for that tier and region'
@@ -110,24 +104,33 @@ if ($clientAddress.AddressFamily -ne [System.Net.Sockets.AddressFamily]::InterNe
 }
 ```
 
-Generate names from your prefix and a random suffix. No subscription, tenant,
-resource name, registry, database host, or identity from the original demo is used.
-The generated names are kept in this terminal's environment only.
+Generate names from the values you chose in prerequisites. There is no random
+resource suffix. `LAB_PREFIX` is the full dashed naming stem, and `LAB_SUFFIX` is
+the same values without dashes, used for temporary file paths.
 
 ```powershell
-$env:LAB_SUFFIX = [guid]::NewGuid().ToString('N').Substring(0, 8)
-$env:LAB_RG = "$($env:LAB_PREFIX)-rg-$($env:LAB_SUFFIX)"
-$env:LAB_AKS = "$($env:LAB_PREFIX)-aks-$($env:LAB_SUFFIX)"
-$env:LAB_ACR = "$($env:LAB_PREFIX)acr$($env:LAB_SUFFIX)"
-$env:LAB_PG_SERVER = "$($env:LAB_PREFIX)-pg-$($env:LAB_SUFFIX)"
-$env:LAB_PG_DATABASE = "$($env:LAB_PREFIX)$($env:LAB_SUFFIX)"
-$env:LAB_IDENTITY = "$($env:LAB_PREFIX)-mi-$($env:LAB_SUFFIX)"
-$env:LAB_FEDERATION = "$($env:LAB_PREFIX)-federation"
-$env:LAB_NAMESPACE = "$($env:LAB_PREFIX)-$($env:LAB_SUFFIX)"
-$env:LAB_SERVICE_ACCOUNT = "$($env:LAB_PREFIX)-api"
-$env:LAB_API_NAME = "$($env:LAB_PREFIX)-api"
-$env:LAB_WEB_NAME = "$($env:LAB_PREFIX)-web"
-$env:LAB_CONFIG_NAME = "$($env:LAB_PREFIX)-settings"
+. (Join-Path $env:LAB_APP_REPO 'assets\scripts\lab-names.ps1')
+foreach ($setting in @('LAB_APPLICATION', 'LAB_ENVIRONMENT', 'LAB_REGION_CODE', 'LAB_OWNER', 'LAB_INSTANCE')) {
+    if (-not [Environment]::GetEnvironmentVariable($setting)) {
+        throw "Restore $setting from the Naming page before continuing."
+    }
+}
+$names = Get-LabResourceNames -Application $env:LAB_APPLICATION -Environment $env:LAB_ENVIRONMENT `
+    -RegionCode $env:LAB_REGION_CODE -Owner $env:LAB_OWNER -Instance $env:LAB_INSTANCE -Location $env:LAB_LOCATION
+$env:LAB_PREFIX = $names.Stem
+$env:LAB_SUFFIX = $names.CompactStem
+$env:LAB_RG = $names.ResourceGroup
+$env:LAB_AKS = $names.Aks
+$env:LAB_ACR = $names.Acr
+$env:LAB_PG_SERVER = $names.PostgresServer
+$env:LAB_PG_DATABASE = $names.Database
+$env:LAB_IDENTITY = $names.Identity
+$env:LAB_FEDERATION = $names.Federation
+$env:LAB_NAMESPACE = $names.Namespace
+$env:LAB_SERVICE_ACCOUNT = $names.ServiceAccount
+$env:LAB_API_NAME = $names.Api
+$env:LAB_WEB_NAME = $names.Web
+$env:LAB_CONFIG_NAME = $names.Config
 $env:KUBECONFIG = Join-Path ([IO.Path]::GetTempPath()) "caldova-$($env:LAB_SUFFIX).kubeconfig"
 
 "Resource group: $env:LAB_RG"
@@ -165,14 +168,14 @@ foreach ($provider in $providers) {
 
 $groupExists = (az group exists --name $env:LAB_RG --output tsv).Trim()
 if ($groupExists -ne 'false') {
-    throw 'The resource group already exists or could not be verified. Choose a new lab name.'
+    throw 'The resource group already exists or could not be verified. Choose a different owner or instance before creating any resources.'
 }
 $registryAvailable = (az acr check-name --name $env:LAB_ACR --query nameAvailable --output tsv).Trim()
 if ($registryAvailable -ne 'true') {
-    throw 'The registry name is unavailable. Restart this module with a new prefix or suffix.'
+    throw 'The registry name is unavailable. Choose a different owner or instance on the Naming page, then regenerate the names.'
 }
 if (Test-Path -LiteralPath $env:KUBECONFIG) {
-    throw 'The temporary kubeconfig path already exists. Restart with a new lab suffix.'
+    throw 'The temporary kubeconfig path already exists. Review the previous lab files before continuing.'
 }
 az aks get-versions --location $env:LAB_LOCATION --output table
 ```
@@ -190,9 +193,9 @@ Confirm that the resource group name shown above is new and dedicated to this la
 if ((Read-Host 'Type create to provision the displayed lab resources') -cne 'create') {
     throw 'Provisioning was not confirmed.'
 }
-az group create --name $env:LAB_RG --location $env:LAB_LOCATION --output none
+az group create --name $env:LAB_RG --location $env:LAB_LOCATION --tags $names.Tags --output none
 az acr create --resource-group $env:LAB_RG --name $env:LAB_ACR `
-    --location $env:LAB_LOCATION --sku Basic --role-assignment-mode rbac --output none
+    --location $env:LAB_LOCATION --sku Basic --role-assignment-mode rbac --tags $names.Tags --output none
 
 $env:LAB_REGISTRY = (az acr show --resource-group $env:LAB_RG --name $env:LAB_ACR `
     --query loginServer --output tsv).Trim()
@@ -204,7 +207,7 @@ if (-not $env:LAB_REGISTRY -or $registryMode -ne 'LegacyRegistryPermissions') {
 
 az aks create --resource-group $env:LAB_RG --name $env:LAB_AKS `
     --location $env:LAB_LOCATION --sku automatic --attach-acr $env:LAB_ACR `
-    --enable-oidc-issuer --enable-workload-identity --output none
+    --enable-oidc-issuer --enable-workload-identity --tags $names.Tags --output none
 ```
 
 Cluster creation can take a while. `--attach-acr` creates a registry role assignment
@@ -250,7 +253,7 @@ allows the workstation IP you supplied; the AKS egress rules are added next.
 
 ```powershell
 az identity create --resource-group $env:LAB_RG --name $env:LAB_IDENTITY `
-    --location $env:LAB_LOCATION --output none
+    --location $env:LAB_LOCATION --tags $names.Tags --output none
 $env:LAB_IDENTITY_CLIENT_ID = (az identity show --resource-group $env:LAB_RG `
     --name $env:LAB_IDENTITY --query clientId --output tsv).Trim()
 $env:LAB_IDENTITY_OBJECT_ID = (az identity show --resource-group $env:LAB_RG `
@@ -265,7 +268,7 @@ az postgres flexible-server create --resource-group $env:LAB_RG `
     --version $env:LAB_PG_VERSION --storage-size $env:LAB_PG_STORAGE `
     --microsoft-entra-auth Enabled --password-auth Disabled `
     --admin-display-name $env:LAB_ADMIN_UPN --admin-object-id $env:LAB_ADMIN_OBJECT_ID `
-    --admin-type User --public-access $env:LAB_CLIENT_IP --output none
+    --admin-type User --public-access $env:LAB_CLIENT_IP --tags $names.Tags --output none
 
 $env:LAB_PG_HOST = (az postgres flexible-server show --resource-group $env:LAB_RG `
     --name $env:LAB_PG_SERVER --query fullyQualifiedDomainName --output tsv).Trim()
@@ -274,7 +277,7 @@ if (-not $env:LAB_PG_HOST) { throw 'Could not resolve the PostgreSQL host.' }
 
 If creation fails, inspect the Azure error and the partially created resources.
 Do not assume the command rolled them back. Use the same resource group for
-[cleanup]({% link appmod-lab/7-cleanup/index.md %}) when appropriate.
+[cleanup]({% link appmod-lab/8-cleanup/index.md %}) when appropriate.
 
 ### Allow the cluster's outbound addresses
 
@@ -315,7 +318,7 @@ $ruleNumber = 0
 foreach ($ip in ($egressIPs | Sort-Object -Unique)) {
     $ruleNumber++
     az postgres flexible-server firewall-rule create --resource-group $env:LAB_RG `
-        --name "$($env:LAB_PREFIX)-egress-$ruleNumber" --server-name $env:LAB_PG_SERVER `
+        --name "fwegress$ruleNumber-$($names.Stem)" --server-name $env:LAB_PG_SERVER `
         --start-ip-address $ip --end-ip-address $ip --output none
 }
 ```
@@ -407,12 +410,10 @@ The sample applications require encrypted PostgreSQL connections. Their current
 evaluate stronger verification and trusted certificate configuration before using
 this pattern in production.
 
-## 6. Prepare safe image-build contexts
+## 6. Prepare a temporary build directory
 
-ACR uploads the complete build context. Some existing demo folders contain
-environment-specific files, so do not pass those folders directly to `az acr build`.
-Create a temporary context from your `AKS_AppMod_Demos` fork containing only the committed files needed by the four
-Dockerfiles:
+The application modules create reviewed build contexts in a temporary directory.
+ACR uploads the entire build context, so don't point it at your whole repository.
 
 ```powershell
 $env:LAB_BUILD_ROOT = Join-Path ([IO.Path]::GetTempPath()) "caldova-build-$($env:LAB_SUFFIX)"
@@ -420,35 +421,10 @@ if (Test-Path -LiteralPath $env:LAB_BUILD_ROOT) {
     throw 'The temporary build directory already exists.'
 }
 New-Item -ItemType Directory -Path $env:LAB_BUILD_ROOT | Out-Null
-$archive = Join-Path $env:LAB_BUILD_ROOT 'source.tar'
-$sourcePaths = @(
-    'Python_app\CaldovaClinicalApi\Dockerfile',
-    'Python_app\CaldovaClinicalApi\requirements.txt',
-    'Python_app\CaldovaClinicalApi\main.py',
-    'Python_app\CaldovaClinicalWeb\Dockerfile',
-    'Python_app\CaldovaClinicalWeb\requirements.txt',
-    'Python_app\CaldovaClinicalWeb\app.py',
-    'Python_app\CaldovaClinicalWeb\caldova_home.py',
-    'Java_app\CaldovaClinicalApiJava\Dockerfile',
-    'Java_app\CaldovaClinicalApiJava\pom.xml',
-    'Java_app\CaldovaClinicalApiJava\src',
-    'Java_app\CaldovaClinicalWebJava\Dockerfile',
-    'Java_app\CaldovaClinicalWebJava\pom.xml',
-    'Java_app\CaldovaClinicalWebJava\src'
-)
-git -C $env:LAB_APP_REPO archive --format=tar --output $archive HEAD -- $sourcePaths
-tar -xf $archive -C $env:LAB_BUILD_ROOT
-Remove-Item -LiteralPath $archive
-git --no-pager -C $env:LAB_APP_REPO log -1 --format='%h %s'
 "Temporary build directory: $env:LAB_BUILD_ROOT"
 ```
 
-The archive uses the current commit, not uncommitted changes. Review the selected
-committed files before uploading them. If you intentionally change application
-source, commit the reviewed change to your isolated branch, inspect and remove only
-the temporary build directory shown above, and rerun this section to recreate it.
-Do not remove the kubeconfig or commit credentials. This allowlist is not a
-substitute for secret scanning.
+Record this path for [cleanup]({% link appmod-lab/8-cleanup/cleanup-8-1-resources.md %}).
 
 ## Checkpoint
 
@@ -457,5 +433,5 @@ that cluster, a seeded PostgreSQL database, and a service account federated with
 managed identity. The next module builds and deploys an application to verify the
 end-to-end connection.
 
-[Next: Caldova Python]({% link appmod-lab/4-python-application/index.md %}) |
+[Next: deploy the application to Azure]({% link appmod-lab/4-deploy-application/index.md %}) |
 [Workshop home]({% link index.md %})

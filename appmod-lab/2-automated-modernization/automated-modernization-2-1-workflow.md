@@ -1,6 +1,6 @@
 ---
 title: Run and review the workflow
-description: Run and review the repository's Java modernization workflow in a disposable fork.
+description: Run and review a Java modernization workflow in your workshop repository.
 ms.topic: tutorial
 parent: Module 02 - Automate a modernization run
 nav_order: 1
@@ -8,38 +8,38 @@ nav_order: 1
 
 ## Goals
 
-Compare the interactive upgrade with the GitHub Actions workflow in your
-`AKS_AppMod_Demos` fork, not the `AppMod-Lab` documentation repository. Inspect
+Compare the interactive upgrade with a GitHub Actions workflow in your own
+workshop repository. Inspect
 the resulting branch, pull request, and build evidence without merging the change.
 
-## 1. Make the fork safe
+## 1. Add the workflows
 
-The workflows in your fork are copies of the original repository's workflows. The
-Caldova deployment and image-signing workflows contain values for the original demo
-environment. The modernization workflow also has push and daily schedule triggers.
-Do not enable these unchanged workflows or run them against a customer account.
+Finish module 01 first: your repository's default branch must contain the original
+`src` app, committed and pushed before the interactive upgrade. Save your work on
+the interactive branch, then switch to your default branch:
 
-1. In your **disposable fork**, open **Settings > Actions > General** and disable
-   GitHub Actions for the repository before editing workflows or adding secrets.
-   If you cannot do this, stop and ask the facilitator for an approved isolated run.
-2. On the fork's default branch, inspect [the application workflow directory](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/.github/workflows).
-   In the fork only, remove or move all workflow files out of `.github/workflows`
-   except `ci.yml` and `modernise.yml`. This includes the deployment, signing,
-   issue-to-project, and optional Copilot setup workflows. Do not edit the original
-   repository.
-3. In the fork's `modernise.yml`, remove the entire `push` and `schedule` entries
-   under `on`, keeping `workflow_dispatch` and its `upgrade_target` input. Commit
-   these safety changes to the fork's default branch while Actions is disabled.
-4. Verify that only **Build and test** and **Java Continuous modernization** remain
-   in the default branch's workflow directory, and that modernization has only the
-   manual trigger. Build and test can still run on its configured pushes and pull
-   requests. Review the Actions settings and branch protection with the owner.
-5. Enable Actions in the fork only after those checks. Run workflows from the
-   cleaned default branch and result branches based on it. Do not push an older
-   interactive branch with the original workflows after enabling Actions unless
-   you have made it safe as well.
+```powershell
+Set-Location -LiteralPath $env:LAB_APP_REPO
+git status --short
+$defaultBranch = Read-Host 'Name of your repository default branch'
+git switch $defaultBranch
+& $env:LAB_SETUP -Module automation
+git status --short
+```
 
-If policy or branch protection prevents these changes, leave Actions disabled and
+The setup adds only `ci.yml` and `modernise.yml`. Both are set to run **manually**;
+it does not add the original deployment or image-signing workflows. Review both
+files and confirm their only trigger is `workflow_dispatch` before committing them.
+If either file already exists, setup stops without overwriting it.
+
+```powershell
+git add -- .github/workflows/ci.yml .github/workflows/modernise.yml
+git commit -m "Add workshop modernization workflows"
+git push
+```
+
+In your repository's **Settings > Actions > General**, check that Actions are
+allowed and that workflows can create pull requests. If policy prevents this,
 use a facilitator-owned demonstration instead.
 
 ## 2. Prepare authentication and CI
@@ -47,25 +47,27 @@ use a facilitator-owned demonstration instead.
 The existing workflow checks for two repository Actions secrets:
 
 * `GH_TOKEN`: a GitHub personal access token authorized for the Copilot account used by Modernize CLI
-* `CONTINUOUS_APPMOD_GH_TOKEN`: a token authorized to write repository contents and workflows in your fork so the result branch can be pushed
+* `CONTINUOUS_APPMOD_GH_TOKEN`: a token authorized to write repository contents and workflows in your workshop repository so the result branch can be pushed
 
-Create these through **Settings > Secrets and variables > Actions** in your fork,
+Create these through **Settings > Secrets and variables > Actions** in your repository,
 using your organization's approved token policy, minimum scope, and short expiry.
 Never put token values in source, a terminal transcript, a prompt, or a screenshot.
 The built-in GitHub Actions token creates the pull request and dispatches CI; the
 repository and organization must allow these operations.
 
-Run or inspect **Build and test** on the fork's default branch. The modernization
+Manually run **Build and test** on the repository's default branch and inspect its
+result. Both workflows are manual; the modernization workflow dispatches CI for
+its result branch. The modernization
 workflow configures its own JDKs; the separate Copilot setup workflow is not a
 prerequisite for its CLI job.
 
 ## 3. Start the run
 
-1. In the fork, open **Actions > Java Continuous modernization**.
+1. In your repository, open **Actions > Java Continuous modernization**.
 2. Select **Run workflow** on the default branch and enter your agreed, supported upgrade target.
 3. Follow the run through CLI installation, upgrade, result-branch creation, pull-request creation, and CI dispatch.
 
-The workflow checks out the fork's **default branch**, regardless of the interactive
+The workflow checks out the repository's **default branch**, regardless of the interactive
 branch used in module 01. It runs the CLI with `--no-tty`; there is no human
 approval of the generated plan before execution. Human review happens at the
 resulting pull request. The workflow does not merge it.

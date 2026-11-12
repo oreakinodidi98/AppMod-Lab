@@ -2,7 +2,9 @@
 
 A facilitator-led workshop for modernizing applications with GitHub Copilot and operating them on Azure Kubernetes Service.
 
-The workshop site uses Jekyll and the Just-the-Docs theme. Start at [`index.md`](index.md) or go directly to the [prerequisites](appmod-lab/0-prerequisites/index.md).
+The workshop site uses Jekyll and the Just-the-Docs theme. Start at [`index.md`](index.md),
+read [About this workshop](about.md), or go directly to the
+[prerequisites](appmod-lab/0-prerequisites/index.md).
 
 ## Preview locally
 
@@ -24,15 +26,35 @@ the exercises' `parent` and `nav_order` settings provide the expandable site nav
 Site pages use Jekyll `{% link path/to/page.md %}` tags for internal links so they
 resolve correctly with pretty URLs and the GitHub Pages project path.
 
+Module 04 contains the Python and Java deployment choices and their shared
+deployment steps. The remaining flow is operations (05), Caldova source
+modernization (06), PetClinic (07), and cleanup (08).
+
+The [Naming page](appmod-lab/0-prerequisites/prerequisite-0-2-naming.md) defines
+the shared resource naming pattern. The instructions and reference scripts use
+[`lab-names.ps1`](assets/scripts/lab-names.ps1) to generate names and tags from
+the same values. Keep that helper in the environment download manifest.
+
 ## Application source
 
-The application source is maintained in [AKS_AppMod_Demos](https://github.com/oreakinodidi98/AKS_AppMod_Demos), not in this documentation repository:
+The workshop starter files are in [`assets/src`](assets/src/),
+[`assets/Python_app`](assets/Python_app/), [`assets/Java_app`](assets/Java_app/),
+and [`assets/Scenario1App`](assets/Scenario1App/).
+Students create their own repository and download the files needed for each
+exercise using the [setup instructions](appmod-lab/0-prerequisites/prerequisite-0-1-technical.md#create-your-workshop-repository).
 
-* [Java todo application](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/src)
-* [Python Caldova](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/Python_app)
-* [Java Caldova](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/Java_app)
+The downloader checks the SHA-256 hashes in [`lab-files.json`](assets/scripts/lab-files.json)
+and refuses to overwrite existing files. When updating a starter file, update its
+manifest hash, the manifest hash in the downloader, and the downloader hash in the
+prerequisites together. Publish those changes before asking students to use them.
 
-Follow the [working-copy instructions](appmod-lab/0-prerequisites/prerequisite-0-1-technical.md#create-your-working-copy)
-to clone this documentation repository (`LAB_REPO`) and a separate disposable
-application fork (`LAB_APP_REPO`). Modernization and application builds use the
-application fork; deployment uses the template in this repository.
+Module 06 downloads the original Caldova source with `-Module caldova-source`.
+Module 07 uses a separate, facilitator-selected Spring PetClinic checkout; its
+assessment screenshots are in [`assets/images`](assets/images/).
+
+The copied [`AutomaticSetup.ps1`](assets/scripts/AutomaticSetup.ps1),
+[`ClassicSetup.ps1`](assets/scripts/ClassicSetup.ps1), and
+[`cleanup.ps1`](assets/scripts/cleanup.ps1) are demo references, not student setup
+commands. They can create or delete whole environments. The workshop uses module
+03 for Azure setup and module 08 for cleanup; the downloader does not copy these
+scripts into student repositories.

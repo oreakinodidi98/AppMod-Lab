@@ -1,0 +1,7 @@
+# The workshop downloader verifies the exact bytes stored in Git.
+/assets/src/** -text
+/assets/Python_app/** -text
+/assets/Java_app/** -text
+/assets/Scenario1App/** -text
+/assets/k8s/caldova.yaml -text
+/assets/scripts/** -text

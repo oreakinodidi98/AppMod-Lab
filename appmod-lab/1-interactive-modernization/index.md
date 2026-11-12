@@ -4,7 +4,7 @@ has_children: true
 nav_order: 2
 ---
 
-Run the [todo application](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/src), ask Copilot to assess it, review the upgrade plan, and check that the app still works after the upgrade.
+Download the todo application to your repository, ask Copilot to assess it, review the upgrade plan, and check that the app still works after the upgrade.
 
 ## Exercise
 

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daymark Todo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Newsreader:opsz,wght@6..72,600&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body>
+<main class="workspace">
+    <header class="masthead">
+        <div>
+            <span class="eyebrow">Daymark</span>
+            <h1>Today, made clear.</h1>
+        </div>
+        <div class="date-block" aria-label="Current task status">
+            <strong th:text="${remainingCount}">0</strong>
+            <span th:text="${remainingCount == 1 ? 'task open' : 'tasks open'}">tasks open</span>
+        </div>
+    </header>
+
+    <section class="task-panel" aria-labelledby="task-heading">
+        <h2 id="task-heading" class="visually-hidden">Todo list</h2>
+
+        <form class="add-form" th:action="@{/todos}" th:object="${todoForm}" method="post">
+            <div class="input-wrap" th:classappend="${#fields.hasErrors('title')} ? ' has-error'">
+                <label for="title">What needs doing?</label>
+                <input id="title" type="text" th:field="*{title}" maxlength="120"
+                       placeholder="Add a focused task" autocomplete="off" autofocus>
+                <p class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Enter a task.</p>
+            </div>
+            <button class="add-button" type="submit" aria-label="Add task">
+                <span aria-hidden="true">+</span>
+                Add task
+            </button>
+        </form>
+
+        <div class="empty-state" th:if="${#lists.isEmpty(todos)}">
+            <div class="empty-mark" aria-hidden="true">✓</div>
+            <h3>Your slate is clear</h3>
+            <p>Add one thing worth finishing today.</p>
+        </div>
+
+        <ol class="task-list" th:unless="${#lists.isEmpty(todos)}">
+            <li class="task-item" th:each="todo : ${todos}" th:classappend="${todo.completed} ? ' is-complete'">
+                <form th:action="@{/todos/{id}/toggle(id=${todo.id})}" method="post">
+                    <button class="toggle-button" type="submit"
+                            th:aria-label="${todo.completed ? 'Mark ' + todo.title + ' as active' : 'Mark ' + todo.title + ' as complete'}">
+                        <span aria-hidden="true" th:text="${todo.completed ? '✓' : ''}"></span>
+                    </button>
+                </form>
+                <span class="task-title" th:text="${todo.title}">Review project notes</span>
+                <form th:action="@{/todos/{id}/delete(id=${todo.id})}" method="post">
+                    <button class="delete-button" type="submit" th:aria-label="${'Delete ' + todo.title}" title="Delete task">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </form>
+            </li>
+        </ol>
+    </section>
+
+    <footer>
+        <span>Stored locally in H2</span>
+        <span>Spring Boot 2.7</span>
+    </footer>
+</main>
+</body>
+</html>

@@ -4,7 +4,7 @@ has_children: true
 nav_order: 3
 ---
 
-Run the modernization workflow in your disposable `AKS_AppMod_Demos` fork and review the resulting branch, pull request, and build evidence.
+Run the modernization workflow in your workshop repository and review the resulting branch, pull request, and build evidence.
 
 ## Exercise
 

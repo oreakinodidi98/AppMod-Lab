@@ -8,21 +8,26 @@ nav_order: 1
 
 ## Goals
 
-Prepare a disposable GitHub fork and the access needed to provision a temporary Azure environment. Complete the access and quota checks with the facilitator before the workshop day.
+Create a repository for your work and check the access needed to provision a temporary Azure environment. Complete the access and quota checks with the facilitator before the workshop day.
 
 ## GitHub and local tools
 
 You need:
 
-* A GitHub account with GitHub Copilot enabled and permission to fork `AKS_AppMod_Demos`. The automated exercise also needs GitHub Actions and the token permissions described in [module 02]({% link appmod-lab/2-automated-modernization/index.md %}).
+* A GitHub account with GitHub Copilot enabled and permission to create a repository. The automated exercise also needs GitHub Actions and the token permissions described in [module 02]({% link appmod-lab/2-automated-modernization/index.md %}).
 * Visual Studio Code with GitHub Copilot and the [GitHub Copilot modernization extension](https://marketplace.visualstudio.com/items?itemName=vscjava.migrate-java-to-azure).
-* A Windows workstation with Git, PowerShell 7.4 or later, Maven 3, a Java 8 JDK, and the JDK for your chosen upgrade target. Install JDK 17 as well for the Caldova Java exercise.
+* A Windows workstation with Git, PowerShell 7.4 or later, Maven 3, a Java 8 JDK, and the JDK for your chosen upgrade target. Install JDK 17 as well if you choose the Java path in module 04.
 * Azure CLI 2.86.0 or later, `kubectl`, `kubelogin`, `psql`, and `tar` available on your command path.
 * Access to the public dependencies and base images used by the applications, subject to your organization's network and software policies.
 
 The examples use PowerShell and Windows paths on your own workstation. A local
-Docker installation is not required: ACR builds the container images. PostgreSQL
-client tools are required, but a local PostgreSQL server is not.
+Docker installation is not needed for module 04: ACR builds the container images.
+You will need Docker and a local PostgreSQL server for the later modules below.
+
+Check these tools before the later modules:
+
+* [Module 06]({% link appmod-lab/6-caldova-source-modernization/index.md %}) needs Python 3.11 or later and a local PostgreSQL 15 or later server.
+* [Module 07]({% link appmod-lab/7-petclinic-aks-automatic/index.md %}) needs Docker Desktop with Linux containers, Docker Compose, and a JDK compatible with the selected PetClinic version. Check the modernization extension's own JDK requirements too.
 
 Check the commands in a new PowerShell session:
 
@@ -73,57 +78,58 @@ If these conditions are not met, stop and agree an approved environment with the
 facilitator. Do not open PostgreSQL to all Azure addresses or bypass security
 policies. AKS, database, registry, networking, and build usage are billable.
 
-## Create your working copy
+## Create your workshop repository
 
-There are two repositories with different responsibilities:
+1. On GitHub, create a new, empty repository in an account or organization where you can run the workshop. Add a README when creating it so it has a default branch.
+2. Clone **your new repository** to your workstation with Git or GitHub Desktop, then open it in Visual Studio Code.
+3. Keep your repository's default branch for the automated exercise. Module 01 uses a separate branch for the interactive upgrade.
 
-| Repository | Purpose | Local setting |
-| --- | --- | --- |
-| [AppMod-Lab](https://github.com/oreakinodidi98/AppMod-Lab) | Workshop instructions and the participant deployment template | `LAB_REPO` |
-| [AKS_AppMod_Demos](https://github.com/oreakinodidi98/AKS_AppMod_Demos) | [Todo source](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/src), [Python Caldova](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/Python_app), [Java Caldova](https://github.com/oreakinodidi98/AKS_AppMod_Demos/tree/main/Java_app), and modernization workflows | `LAB_APP_REPO` |
-
-1. Clone `AppMod-Lab` for the workshop instructions and deployment template. You can also read the instructions on the published site, but the deployment exercise still needs the local template.
-2. Fork **AKS_AppMod_Demos** into an account or organization where you have permission to run the workshop. Use a disposable fork, not a production repository.
-3. Before pushing changes or adding secrets, disable Actions in the application fork and review the safety steps in [module 02]({% link appmod-lab/2-automated-modernization/automated-modernization-2-1-workflow.md %}). Several deployment workflows target a different demonstration environment. Leave Actions disabled until that module's checks are complete.
-4. Clone your application fork with Git or GitHub Desktop. Open that clone in Visual Studio Code for the modernization exercises. Keep it separate from the `AppMod-Lab` clone; do not copy source into the documentation repository.
-5. Keep the application fork's default branch as the baseline for the automated exercise. Do interactive upgrade work on a separate branch.
-
-In PowerShell, set both local paths. Keep this terminal open for the workshop;
-the lab settings are session variables and are not written to either repository.
+In PowerShell, enter the path to your repository. Keep this terminal open for the
+workshop; the lab settings are session variables.
 
 ```powershell
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
-$env:LAB_REPO = (Resolve-Path -LiteralPath (Read-Host 'Full path to your AppMod-Lab clone')).Path
-$env:LAB_APP_REPO = (Resolve-Path -LiteralPath (Read-Host 'Full path to your AKS_AppMod_Demos fork clone')).Path
-if ($env:LAB_REPO -eq $env:LAB_APP_REPO) {
-    throw 'Use separate clones for workshop documentation and application source.'
-}
-foreach ($file in @('index.md', 'assets\k8s\caldova.yaml')) {
-    if (-not (Test-Path -LiteralPath (Join-Path $env:LAB_REPO $file))) {
-        throw 'LAB_REPO must point to the AppMod-Lab documentation clone.'
-    }
-}
-foreach ($file in @('src\pom.xml', 'Python_app\CaldovaClinicalApi\main.py', 'Java_app\CaldovaClinicalApiJava\pom.xml')) {
-    if (-not (Test-Path -LiteralPath (Join-Path $env:LAB_APP_REPO $file))) {
-        throw 'LAB_APP_REPO must point to your AKS_AppMod_Demos fork clone.'
-    }
-}
+$env:LAB_APP_REPO = (Resolve-Path -LiteralPath (Read-Host 'Full path to your workshop repository')).Path
 Set-Location -LiteralPath $env:LAB_APP_REPO
+if ((git rev-parse --show-toplevel).Trim() -ne $env:LAB_APP_REPO.Replace('\', '/')) {
+    throw 'Select the root of your workshop repository.'
+}
 git remote -v
 git status --short
 ```
 
-Confirm that the push remote points to your disposable `AKS_AppMod_Demos` fork. Do not proceed with
-unrelated working-tree changes; preserve them and use a separate clone if necessary.
-If you open another terminal or restart PowerShell, re-enter the required settings
-from your private notes. Never record tokens or passwords in those notes.
+Confirm the push remote points to **your** repository. Do not continue with unrelated changes; use a separate clone if needed.
+
+## Get the setup command
+
+Download the setup script once, check its hash, and read it before running it.
+It downloads only the files for the module you choose; it won't overwrite existing
+files. The script and starter files are checked against the workshop's reviewed
+versions. If a check fails, stop and ask the facilitator for the matching instructions.
+
+```powershell
+$env:LAB_SETUP = Join-Path ([IO.Path]::GetTempPath()) 'appmod-lab-get-files.ps1'
+Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/scripts/get-lab-files.ps1' -OutFile $env:LAB_SETUP
+$expected = '250b6920419840bc8536d5753799b16a0c1963cb3bab4db2dbcafb1f7e076009'
+if ((Get-FileHash -LiteralPath $env:LAB_SETUP -Algorithm SHA256).Hash -ne $expected) {
+    throw 'The setup script does not match these workshop instructions. Do not run it.'
+}
+Get-Content -LiteralPath $env:LAB_SETUP
+```
+
+In each module, run its `& $env:LAB_SETUP -Module ...` command from the root of
+your repository. Review and commit the downloaded files before continuing. The
+setup command never commits or pushes for you. If a download is interrupted, read
+the error and check `git status` before removing any partial files and retrying.
+If you restart PowerShell, set `LAB_APP_REPO` again and repeat the script download
+and hash check. Never record tokens or passwords in your notes.
 
 ## Checkpoint
 
-You can identify your fork, selected subscription, resource owner, approved region,
+You can identify your repository, selected subscription, resource owner, approved region,
 network design, and cleanup owner. You have the tools and permissions for the modules
 you will run.
 
-[Next: interactive modernization]({% link appmod-lab/1-interactive-modernization/index.md %}) |
+[Next: naming]({% link appmod-lab/0-prerequisites/prerequisite-0-2-naming.md %}) |
 [Workshop home]({% link index.md %})
