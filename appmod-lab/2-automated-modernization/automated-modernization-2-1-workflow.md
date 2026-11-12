@@ -784,14 +784,68 @@ of the interactive branch used in module 01. It runs the CLI with `--no-tty`; th
 approval of the generated plan before execution. Human review happens at the
 resulting pull request. The workflow does not merge it.
 
+### What happens inside the modernisation workflow
+
+Open the workflow run in **Actions** and expand its steps to follow the progress.
+The same job runs whether it was started manually, by a push, or on its
+schedule, if those triggers are enabled.
+
+1. **Install and start the CLI:** The workflow downloads and runs the installer,
+   then starts Modernize CLI. Open **Run Modernize CLI** to follow its output.
+   The logs may show the CLI version and details similar to a local run.
+
+2. **Set the input:** For a manual run, you can enter an upgrade target. Push
+   and scheduled runs use the CLI's `latest` default. This workflow does not
+   provide a model-selection input; model availability and configuration depend
+   on the CLI and your organization's access.
+
+3. **Prepare the upgrade:** The CLI examines the source in `src`. In this
+   exercise, that's the Java todo app in your workshop repository. Review the
+   logs to see what the CLI detects; the messages can vary between versions.
+
+4. **Create the plan:** The CLI prepares an upgrade plan. You may see a
+   **create java upgrade plan** skill mentioned in the logs. Unlike the
+   interactive exercise, this run has no pause for a person to review and
+   approve the plan before changes are made. That is an important trade-off to
+   discuss; the resulting pull request is the human review point.
+
+5. **Run the upgrade and validate:** The CLI attempts the upgrade and may run
+   builds or tests as part of its work. Check its output for the actual results;
+   a separate CI run is requested later for the result branch.
+
 ## 9. Review the result
 
-Open the workflow summary and, if a change was produced, open its pull request:
+### Review the branch and pull request
+
+When the CLI produces changes, the workflow creates a branch named like:
+
+```text
+modernize-upgrade-<run_id>-<attempt>
+```
+
+It then attempts to open a pull request. For a `Java 21` target, the title
+would be:
+
+```text
+chore: modernize application (Java 21)
+```
+
+Open the workflow summary and the pull request, then review the changed files:
 
 * Check the target, changed files, generated reports, and any unresolved findings.
 * Confirm that **Build and test** ran on the result branch and inspect its actual result.
 * If you completed module 01, compare the result with its baseline and interactive plan.
 * Decide what further testing and human approvals are required before a real merge.
+
+### Check CI on the result branch
+
+After creating the pull request, the workflow requests a run of `ci.yml` on the
+result branch. Open **Actions > Build and test**, find that run, and check its
+actual result. A request to run CI does not mean the build or tests passed; if
+the dispatch fails, investigate and run the checks before continuing.
+
+The modernisation result is not merged automatically. Review the pull request
+and its validation results before deciding what to do next.
 
 If the CLI produces no net change, the workflow reports that outcome and creates no
 result branch or pull request. If pull-request creation fails after a branch was
@@ -799,8 +853,98 @@ pushed, the workflow summary points to the branch; investigate before proceeding
 Inspect the uploaded logs and recovery bundle when available, and treat their contents
 as potentially sensitive.
 
+### Troubleshooting
+
+Modernisation is not always flawless. If the build fails after the
+modernisation run, open the failed **Build and test** run and inspect the logs
+to understand what went wrong.
+
+For example, a build on a modernisation branch might fail with:
+
+```text
+UnsupportedClassVersionError: org/junit/platform/launcher/TagFilter has been compiled by a more recent version of the Java Runtime (class file version 61.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+```
+
+In this example, a dependency needs Java 17 or later, but the build is running
+with Java 8. This can happen when CI is still configured for the original app
+after an upgrade. Check the JDK used in the CI logs and compare it with the
+upgraded project's `src/pom.xml` and dependencies.
+
+The CI example in step 5 reads `java.version` from `src/pom.xml` rather than
+hardcoding a JDK. If that property is missing, it falls back to Java 8, so check
+the detected version and confirm it is compatible with the upgraded project.
+Adjust the project or workflow as needed; the right fix depends on the failure.
+
+#### Fixing it with Copilot
+
+You can ask Copilot to investigate a failed check and suggest a fix. For
+example, in the [GitHub Copilot app](https://docs.github.com/en/copilot/get-started/quickstart-copilot-app):
+
+1. Open the app and connect your workshop repository. You can also add it to a
+   project if you want to organise related work.
+2. Select **Pull requests**, open the modernisation PR, and choose **New
+   session**. Alternatively, start a session on the result branch.
+3. Ask Copilot to investigate the failed build and explain its proposed fix.
+   Remove tokens, passwords, and other sensitive information before sharing logs.
+4. Review the proposed changes and tests before updating the PR. Then run CI
+   against the updated result branch and confirm that the new commit passes.
+
 Disable **Java Continuous modernization** when finished. Remove the demonstration
 secrets or revoke the short-lived tokens when they are no longer needed.
+
+## 10. The takeaway: make modernisation continuous
+
+The point is not just to upgrade this one application. It's to make keeping
+applications current part of the SDLC.
+
+We set the goal, let the agent plan, act, and observe, then validate the result
+and bring it back for human review. Reusable tasks can retain what worked, and
+scheduled runs can make the process repeatable when they're approved.
+
+That's the shift: **from a once-a-decade rewrite to an ongoing modernisation
+loop.**
+
+### What changes
+
+* **Scope:** Start with one repository and one pull request rather than a
+  portfolio-wide programme.
+* **Timeline:** Smaller changes can take days or weeks rather than months or
+  years, although the actual time depends on the application.
+* **Ownership:** The app team can work with agents rather than relying solely
+  on a dedicated modernisation team.
+* **Risk:** Build and test results on each iteration help identify problems
+  earlier, but they don't replace human review or all other validation.
+* **Knowledge:** Capture useful patterns as custom tasks so teams can reuse
+  them instead of relearning them.
+
+**Agents do the volume, people own the judgment.**
+
+### Modernisation as part of the SDLC
+
+Modernisation can become a recurring, multi-phase loop rather than a separate
+project:
+
+**Detect -> Assess -> Transform -> Validate -> Merge**
+
+In this module, the workflow can make changes automatically, but a person still
+reviews the pull request and decides whether it should be merged. The workflow
+does not merge it for you.
+
+### Getting started
+
+* **Set appropriate triggers:** For example, a separate scheduled workflow
+  could create an issue for modernisation. This lab's example runs the CLI
+  directly; it does not create an issue.
+* **Start small, then expand:** Begin with one repository and widen from there.
+* **Integrate Modernize CLI into CI/CD:** Use a workflow like the one in this
+  module, with triggers and permissions approved for your team.
+
+## References
+
+* [CI/CD integration with Modernize CLI](https://learn.microsoft.com/en-us/azure/developer/github-copilot-app-modernization/modernization-agent/cicd-integration?tabs=github-actions)
+* [Modernize CLI quickstart](https://aka.ms/ghcp-modernization-agent)
+* [Modernize CLI GitHub repository](https://github.com/microsoft/modernize-cli)
+* [Modernize CLI commands](https://learn.microsoft.com/azure/developer/github-copilot-app-modernization/modernization-agent/cli-commands)
 
 ## Checkpoint
 
