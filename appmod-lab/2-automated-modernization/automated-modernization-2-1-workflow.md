@@ -257,6 +257,13 @@ using your organization's approved token policy, minimum scope, and short expiry
 
 > Never put token values in source, a terminal transcript, a prompt, or a screenshot.
 
+[![GitHub Actions repository secrets page showing the two modernization token names.]({{ '/assets/images/Agentic_SDLC_Modernization_repoSecrets_lab.png' | relative_url }})]({{ '/assets/images/Agentic_SDLC_Modernization_repoSecrets_lab.png' | relative_url }})
+
+**What this shows:** The repository secrets page, including `GH_TOKEN` and
+`CONTINUOUS_APPMOD_GH_TOKEN`. The other secrets shown are not required for this
+workflow. Secret values are not displayed. Select the screenshot to view it
+full size.
+
 ### Create a CI workflow
 
 We'll use Copilot to create a CI workflow that builds and tests the app in `src`.
@@ -491,6 +498,12 @@ that the Maven and JDK checks pass before continuing. If they fail, inspect the
 logs and troubleshoot; remove any sensitive information before sharing errors.
 If setup fails during a Copilot session, Copilot may still begin work with an
 incomplete environment, so check the session logs as well.
+
+[![Successful Copilot Setup Steps workflow run shown in GitHub Actions.]({{ '/assets/images/Agentic_SDLC_Modernization_workflow_Copilot_setup.png' | relative_url }})]({{ '/assets/images/Agentic_SDLC_Modernization_workflow_Copilot_setup.png' | relative_url }})
+
+**What this shows:** An example successful Copilot setup run triggered by a pull
+request. Your run may have a different trigger and duration. Select the
+screenshot to view it full size.
 
 The file must be on the default branch for Copilot to use it. See
 [Configure the development environment for agents on GitHub Actions](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment)
@@ -790,6 +803,13 @@ Open the workflow run in **Actions** and expand its steps to follow the progress
 The same job runs whether it was started manually, by a push, or on its
 schedule, if those triggers are enabled.
 
+[![Successful Java Continuous modernization job showing the CLI, branch, pull request, and CI dispatch steps.]({{ '/assets/images/Agentic_SDLC_Modernization_workflow_lab.png' | relative_url }})]({{ '/assets/images/Agentic_SDLC_Modernization_workflow_lab.png' | relative_url }})
+
+**What this shows:** An example completed modernisation job. Expand a step to
+inspect its logs; check the separate CI run for its build and test results.
+Your run may take a different amount of time or have a different outcome.
+Select the screenshot to view it full size.
+
 1. **Install and start the CLI:** The workflow downloads and runs the installer,
    then starts Modernize CLI. Open **Run Modernize CLI** to follow its output.
    The logs may show the CLI version and details similar to a local run.
@@ -832,6 +852,12 @@ chore: modernize application (Java 21)
 
 Open the workflow summary and the pull request, then review the changed files:
 
+[![Modernization results summary showing the target, result branch, and links to the branch and pull request.]({{ '/assets/images/Agentic_SDLC_Modernization_results_lab.png' | relative_url }})]({{ '/assets/images/Agentic_SDLC_Modernization_results_lab.png' | relative_url }})
+
+**What this shows:** An example scheduled run that produced a result branch and
+pull request. This example used the `latest` default; your target and results
+may differ. Select the screenshot to view it full size.
+
 * Check the target, changed files, generated reports, and any unresolved findings.
 * Confirm that **Build and test** ran on the result branch and inspect its actual result.
 * If you completed module 01, compare the result with its baseline and interactive plan.
@@ -843,6 +869,12 @@ After creating the pull request, the workflow requests a run of `ci.yml` on the
 result branch. Open **Actions > Build and test**, find that run, and check its
 actual result. A request to run CI does not mean the build or tests passed; if
 the dispatch fails, investigate and run the checks before continuing.
+
+[![Successful Build and test workflow run on a modernisation result branch.]({{ '/assets/images/Agentic_SDLC_Modernization_workflow_CI.png' | relative_url }})]({{ '/assets/images/Agentic_SDLC_Modernization_workflow_CI.png' | relative_url }})
+
+**What this shows:** An example successful **Build and test** run on a result
+branch. Check your own run and commit rather than assuming it passed. Select the
+screenshot to view it full size.
 
 The modernisation result is not merged automatically. Review the pull request
 and its validation results before deciding what to do next.
