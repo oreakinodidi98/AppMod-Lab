@@ -845,6 +845,6 @@ account federated with the user-assigned managed identity. The `.envrc` file
 records the resource values for the remaining modules. Keep this PowerShell
 terminal open so the environment variables remain available.
 
-[Next: deploy Python]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-2-python.md %}) |
+[Next: build and verify Python]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-2-python.md %}) |
 [Module 03 home]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/index.md %}) |
 [Workshop home]({{ site.baseurl }}{% link index.md %})

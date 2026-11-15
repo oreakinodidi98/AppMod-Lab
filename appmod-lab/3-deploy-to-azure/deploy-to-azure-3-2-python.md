@@ -1,5 +1,5 @@
 ---
-title: Deploy and verify Python
+title: Build and verify Python
 description: Build the Python Caldova API and web application and verify them on AKS.
 ms.topic: tutorial
 parent: Module 03 - Deploy to Azure
@@ -117,28 +117,34 @@ Check whether a local database named `drugs` already exists. The command may
 prompt for the local `postgres` account password:
 
 ```powershell
+$ErrorActionPreference = 'Stop'
+$PSNativeCommandUseErrorActionPreference = $true
 & "$pgBin\psql.exe" --host 127.0.0.1 --port 5432 `
   --username postgres --dbname postgres --tuples-only --no-align `
   --command "SELECT 1 FROM pg_database WHERE datname = 'drugs';"
-if ($LASTEXITCODE -ne 0) { throw 'Could not check the local database.' }
 ```
 
-If the result is `1`, stop and check its owner and contents. Do not change an
-unrelated database. If the check succeeds and returns no row, create the disposable database and load the
-SQL seed downloaded during environment setup:
+If the command fails, stop and investigate. If the result is `1`, stop and
+check its owner and contents. Do not change an unrelated database. If the
+check succeeds and returns no row, create the disposable database:
 
 ```powershell
 & "$pgBin\createdb.exe" --host 127.0.0.1 --port 5432 --username postgres drugs
-if ($LASTEXITCODE -ne 0) { throw 'Could not create the local database; do not load the seed.' }
+```
+
+Only after the database is created successfully, load the SQL seed downloaded
+during environment setup:
+
+```powershell
 & "$pgBin\psql.exe" --host 127.0.0.1 --port 5432 `
   --username postgres --dbname drugs --set ON_ERROR_STOP=1 `
   --file Python_app\CaldovaClinicalApi\db\init.sql
-if ($LASTEXITCODE -ne 0) { throw 'Could not initialize the local database.' }
 ```
 
 The seed creates the `pharmacy` schema, including the materials, locations,
 inventory lots, and studies tables. It preserves existing seed records on
-retry. Review the database before applying it again.
+retry. Stop and investigate if initialization fails, and review the database
+before applying the seed again.
 
 #### 4. Start and check the API
 
@@ -245,7 +251,9 @@ your command path. Check the [prerequisites]({{ site.baseurl }}{% link appmod-la
 Run this in the original environment setup terminal. The temporary folders
 contain only the committed files needed by the two Dockerfiles, not your local
 virtual environment, database seed, or practice Dockerfile. This prevents
-those local files from being included in the images.
+those local files from being included in the images. Check that the displayed
+subscription matches your workshop subscription and that the registry and
+build settings are present.
 
 ```powershell
 Set-Location -LiteralPath $env:LAB_APP_REPO
@@ -253,23 +261,25 @@ $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
 $env:API_IMAGE = $null
 $env:WEB_IMAGE = $null
-if ((az account show --query id --output tsv).Trim() -ne $env:AZURE_SUBSCRIPTION_ID) {
-    throw 'The active Azure subscription does not match the workshop subscription.'
-}
-if (-not $env:ACR_NAME -or -not $env:ACR_LOGIN_SERVER -or -not $env:BUILD_ROOT -or -not $env:NAME_PREFIX) {
-    throw 'Workshop registry or build settings are missing. Restore the environment setup variables.'
-}
+az account show --query "{Name:name,Id:id}" --output table
+"Workshop subscription ID: $env:AZURE_SUBSCRIPTION_ID"
+"Registry: $env:ACR_NAME ($env:ACR_LOGIN_SERVER)"
+"Build root: $env:BUILD_ROOT"
+"Name prefix: $env:NAME_PREFIX"
 docker version
 trivy --version
 ```
 
-Create the build folders and image names:
+Stop if a value is missing or the subscription is wrong. Restore the
+environment setup variables or select the correct subscription before
+continuing.
+
+Create the build folders and image names. The new `Python_app` folder must not
+already exist; `New-Item` stops rather than replacing it.
 
 ```powershell
 New-Item -ItemType Directory -Path $env:BUILD_ROOT -Force | Out-Null
-if (Test-Path -LiteralPath (Join-Path $env:BUILD_ROOT 'Python_app')) {
-    throw 'Python build contexts already exist. Review them before recreating them.'
-}
+New-Item -ItemType Directory -Path (Join-Path $env:BUILD_ROOT 'Python_app') | Out-Null
 git archive --format=tar HEAD -- `
     Python_app/CaldovaClinicalApi/Dockerfile `
     Python_app/CaldovaClinicalApi/main.py `
@@ -380,10 +390,15 @@ $apiDigest = (az acr manifest show-metadata --registry $env:ACR_NAME `
     --name $apiTag --query digest --output tsv).Trim()
 $webDigest = (az acr manifest show-metadata --registry $env:ACR_NAME `
     --name $webTag --query digest --output tsv).Trim()
-if ($apiDigest -cnotmatch '^sha256:[a-f0-9]{64}$' -or
-    $webDigest -cnotmatch '^sha256:[a-f0-9]{64}$') {
-    throw 'A published image digest could not be verified.'
-}
+"API digest: $apiDigest"
+"Web digest: $webDigest"
+```
+
+Check that each digest starts with `sha256:` followed by 64 hexadecimal
+characters. Stop if either is missing or incomplete. Then scan the two
+digest references:
+
+```powershell
 $apiDigestImage = '{0}/{1}@{2}' -f $env:ACR_LOGIN_SERVER, $env:API_IMAGE_REPOSITORY, $apiDigest
 $webDigestImage = '{0}/{1}@{2}' -f $env:ACR_LOGIN_SERVER, $env:WEB_IMAGE_REPOSITORY, $webDigest
 trivy image --image-src remote --scanners vuln,secret --severity HIGH,CRITICAL --exit-code 1 $apiDigestImage

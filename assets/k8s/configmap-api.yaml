@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: caldovaclinicalapi-config
+  namespace: caldova
+  labels:
+    app.kubernetes.io/name: caldovaclinicalapi
+    app.kubernetes.io/part-of: caldova
+data:
+  LOG_LEVEL: "INFO"
+  DATA_MODE: "demo"
+  DATABASE_AUTH_MODE: "entra"
+  DATABASE_HOST: "db-caldova210226.postgres.database.azure.com"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "caldova"
+  DATABASE_USER: "aks-mi-1779404459"
+  ALLOWED_ORIGINS: "https://caldova.contoso.com"
+  CALDOVA_API_URL: "http://caldovaclinicalapi"

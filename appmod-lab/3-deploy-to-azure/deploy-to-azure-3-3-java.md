@@ -1,5 +1,5 @@
 ---
-title: Test, deploy, and compare Java
+title: Build and verify Java
 description: Test and deploy the Java Caldova implementation against the same PostgreSQL database.
 ms.topic: tutorial
 parent: Module 03 - Deploy to Azure
@@ -296,8 +296,8 @@ Start Docker Desktop with Linux containers and confirm Trivy is installed as
 described in the [prerequisites]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}).
 First create build folders from the committed source. `git archive` copies only
 the selected files; separate temporary test copies keep Maven output out of
-the image build folders. The subscription check prevents publishing to the
-wrong Azure subscription.
+the image build folders. First confirm that the displayed subscription matches
+your workshop subscription.
 
 ```powershell
 Set-Location -LiteralPath $env:LAB_APP_REPO
@@ -305,11 +305,16 @@ $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
 $env:API_IMAGE = $null
 $env:WEB_IMAGE = $null
-if ((az account show --query id --output tsv).Trim() -ne $env:AZURE_SUBSCRIPTION_ID) {
-    throw 'The active Azure subscription does not match the workshop subscription.'
-}
+az account show --query "{Name:name,Id:id}" --output table
+"Workshop subscription ID: $env:AZURE_SUBSCRIPTION_ID"
 docker version
 trivy --version
+```
+
+Stop and select the workshop subscription if the IDs do not match. Once they
+match, create the build and test folders:
+
+```powershell
 $buildDir = Join-Path $env:BUILD_ROOT "java-$([guid]::NewGuid().ToString('N'))"
 New-Item -ItemType Directory -Path $buildDir | Out-Null
 $sourcePaths = @(
