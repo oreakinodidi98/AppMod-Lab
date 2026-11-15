@@ -2,16 +2,16 @@
 title: Build and deploy Caldova
 description: Build participant-specific images, deploy them on AKS, and verify database-backed behavior.
 ms.topic: tutorial
-parent: Module 04 - Deploy the application to Azure
-nav_order: 3
+parent: Module 03 - Deploy to Azure
+nav_order: 4
 ---
 
 ## Before you start
 
-Complete [module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/azure-environment-3-1-setup.md %}) and select the Python or Java
-contexts in the [Python path]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-1-python.md %}) or
-[Java path]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-2-java.md %})
-of module 04. Use the same PowerShell terminal and keep
+Complete [environment setup]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-1-environment.md %}) and choose the Python or Java
+application in the [Python path]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-2-python.md %}) or
+[Java path]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-3-java.md %}).
+Then follow this shared build and deployment step. Use the same PowerShell terminal and keep
 your lab settings available. The commands operate only on your dedicated resource
 group, registry, cluster, and namespace.
 
@@ -66,7 +66,7 @@ The `az acr manifest` command is in preview in Azure CLI.
 
 The ConfigMap contains non-secret connection settings. The API pod receives its
 managed identity configuration through the service account and workload identity
-webhook; it does not receive a database password. Module 03 downloaded the template
+webhook; it does not receive a database password. The environment setup downloaded the template
 into your workshop repository (`LAB_APP_REPO`).
 
 ```powershell
@@ -207,5 +207,5 @@ page's HTTP response as an end-to-end success.
 ## Return to your module
 
 Keep the main terminal open so the inventory response remains available for
-comparison. Return to [Python]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-1-python.md %}#3-record-the-comparison-baseline)
-or [Java]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-2-java.md %}#3-compare-behavior).
+comparison. Return to [Python]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-2-python.md %}#3-record-the-comparison-baseline)
+or [Java]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-3-java.md %}#3-compare-behavior).

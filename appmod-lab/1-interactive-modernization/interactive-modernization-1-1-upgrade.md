@@ -154,7 +154,7 @@ Before you start, here's what each option does:
 * **Custom Assessment:** Run a new assessment with more control over the scope
   and settings, such as the target runtime, Azure service, and analysis depth.
   A full analysis can take longer. You'll try this option with PetClinic in
-  [module 07]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}).
+  [module 06]({{ site.baseurl }}{% link appmod-lab/6-petclinic-aks-automatic/index.md %}).
 
 * **Import a report:** Bring in an existing assessment instead of running it
   again. This is useful when an app has already been assessed or when another
@@ -236,7 +236,7 @@ assessment, **Custom Assessment** lets you choose:
 
 **What this shows:** Settings you can choose when starting a custom assessment.
 Select the screenshot to view it full size. You'll use Custom Assessment in
-[module 07]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}).
+[module 06]({{ site.baseurl }}{% link appmod-lab/6-petclinic-aks-automatic/index.md %}).
 
 ### Plan the Java upgrade
 

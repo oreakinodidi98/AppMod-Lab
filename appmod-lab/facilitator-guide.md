@@ -39,24 +39,24 @@ the customer's cost controls; do not promise a fixed workshop cost.
 | Welcome and preparation  | Set the business problem, safety boundaries, and expected costs | Everyone can access their repository and required tools    |
 | Interactive Java upgrade | Baseline first, then assess and approve a bounded plan          | Participants can explain the target and validation plan    |
 | Automated Java upgrade   | Contrast unattended plan execution with human PR review         | Participants can find the run, its result, and CI evidence |
-| Azure environment        | Explain identities, network choices, and the disposable scope   | AKS, ACR, PostgreSQL, and workload identity are ready      |
-| Deploy Caldova           | Let participants choose Python or Java; compare both if useful   | The chosen version returns the seeded inventory             |
+| Deploy to Azure: provision | Explain identities, network choices, and the disposable scope  | AKS, ACR, PostgreSQL, and workload identity are ready      |
+| Deploy to Azure: app      | Let participants choose Python or Java; compare both if useful   | The chosen version returns the seeded inventory             |
 | Operations and feedback  | Distinguish evidence, a hypothesis, and an approved action      | Participants produce a triaged follow-up                   |
 | Caldova from source      | Assess the original app and review the changes needed for AKS    | Generated code and deployment pass the agreed checks         |
 | PetClinic migration      | Apply the assessment and review approach to a different Java app | The deployed app uses its own database and preserves behavior |
 | Cleanup                  | Confirm the owner and selected subscription before deletion     | Resource deletion is verified or explicitly handed off     |
 
 
-## Prepare modules 06 and 07
+## Prepare modules 05 and 06
 
 These modules are part of the workshop flow. Allow 90-120 minutes for Caldova
 source modernization and 120-150 minutes for PetClinic, plus the earlier modules
 and Azure setup. Plan more than one session if needed. Keep the environment
-until module 07 is complete, then clean up in module 08.
+until module 06 is complete, then clean up in module 07.
 
-* [Module 06: Caldova from source]({{ site.baseurl }}{% link appmod-lab/6-caldova-source-modernization/index.md %}) downloads `Scenario1App` from this repository's assets, not the finished module 04 app. Run through local PostgreSQL setup and the Copilot changes before the session. Check that the generated app gets and renews Entra tokens before deploying it.
+* [Module 05: Caldova from source]({{ site.baseurl }}{% link appmod-lab/5-caldova-source-modernization/index.md %}) downloads `Scenario1App` from this repository's assets, not the already-prepared app from module 03. Run through local PostgreSQL setup and the Copilot changes before the session. Check that the generated app gets and renews Entra tokens before deploying it.
 
-* [Module 07: PetClinic on AKS Automatic]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}) uses a separate upstream checkout. Agree on a source commit, compatible JDK, PostgreSQL profile, and Compose configuration ahead of time. Try the assessment with your installed extension; the screenshots and issue counts are examples.
+* [Module 06: PetClinic on AKS Automatic]({{ site.baseurl }}{% link appmod-lab/6-petclinic-aks-automatic/index.md %}) uses a separate upstream checkout. Agree on a source commit, compatible JDK, PostgreSQL profile, and Compose configuration ahead of time. Try the assessment with your installed extension; the screenshots and issue counts are examples.
 
 * Give PetClinic a separate database and namespace. Decide whether participants transfer synthetic data or initialize a fresh database. Agree on validation and rollback before migration.
 
@@ -93,8 +93,8 @@ human decision on a proposed follow-up.
 
 * If a participant cannot obtain GitHub Actions or token permissions, have them review a facilitator-owned run that was prepared and approved beforehand. Explain that they did not execute the automation themselves.
 * If Azure quota, policy, permissions, or region availability blocks provisioning, pause the Azure exercises. Use a previously approved facilitator environment for a demonstration, and record that the participant did not provision their own resources.
-* If PostgreSQL or workload identity is unavailable, inspect the failure in [the deployment exercise]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-caldova.md %}). Do not switch to synthetic data or disable readiness checks without explaining the behavior change.
+* If PostgreSQL or workload identity is unavailable, inspect the failure in [the deployment exercise]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-4-deploy.md %}). Do not switch to synthetic data or disable readiness checks without explaining the behavior change.
 * If an image build or upgrade takes longer than planned, continue with the architecture and review discussion while it runs, then return to the result.
-* If resources must be retained, name an owner and a deletion time. Ensure the owner has the values and access needed to finish [cleanup]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}).
+* If resources must be retained, name an owner and a deletion time. Ensure the owner has the values and access needed to finish [cleanup]({{ site.baseurl }}{% link appmod-lab/7-cleanup/index.md %}).
 
 [Back to the workshop]({{ site.baseurl }}{% link index.md %})

@@ -2,7 +2,7 @@
 title: Observe, recover, and propose a follow-up
 description: Inspect Caldova health and practice a human-reviewed operational feedback loop.
 ms.topic: tutorial
-parent: Module 05 - Operate and improve
+parent: Module 04 - Operate and improve
 nav_order: 1
 ---
 
@@ -11,7 +11,7 @@ nav_order: 1
 Observe the deployed application, practice a bounded recovery exercise, and turn an
 operational signal into a proposed engineering action. This module requires a
 successful Python or Java deployment from
-[module 04]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/index.md %}).
+[module 03]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/index.md %}).
 
 ## 1. Inspect the workload
 
@@ -44,30 +44,35 @@ not a high-availability or load test.
 ```powershell
 kubectl scale deployment $env:LAB_WEB_NAME --namespace $env:LAB_NAMESPACE --replicas=2
 kubectl rollout status "deployment/$($env:LAB_WEB_NAME)" --namespace $env:LAB_NAMESPACE --timeout=10m
-$pods = @(kubectl get pods --namespace $env:LAB_NAMESPACE `
-    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME" --output json |
-    ConvertFrom-Json | Select-Object -ExpandProperty items)
-if ($pods.Count -lt 2) { throw 'Two web pods are not available. Investigate before deleting one.' }
-$selectedPod = $pods[0].metadata.name
-"Selected workshop web pod: $selectedPod"
-if ((Read-Host 'Type the selected pod name to delete it') -cne $selectedPod) {
-    throw 'Pod deletion was not confirmed.'
-}
-kubectl delete pod $selectedPod --namespace $env:LAB_NAMESPACE
-kubectl rollout status "deployment/$($env:LAB_WEB_NAME)" --namespace $env:LAB_NAMESPACE --timeout=10m
-kubectl wait --for=condition=ready pods --namespace $env:LAB_NAMESPACE `
-    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME" --timeout=5m
-$replacementPods = @(kubectl get pods --namespace $env:LAB_NAMESPACE `
-    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME" --output json |
-    ConvertFrom-Json | Select-Object -ExpandProperty items)
-if ($replacementPods.Count -lt 2 -or $selectedPod -in $replacementPods.metadata.name) {
-    throw 'The expected replacement web pod is not ready. Inspect the deployment and events.'
-}
-$replacementPods | Select-Object @{Name='Pod'; Expression={ $_.metadata.name }},
-    @{Name='Phase'; Expression={ $_.status.phase }}
+kubectl get pods --namespace $env:LAB_NAMESPACE `
+    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME"
 ```
 
-Confirm that the deleted pod has been replaced and that two web replicas are ready.
+Confirm that two web pods are ready. Copy the name of one of those pods and
+enter it below. Check the name and namespace before deleting it; do not delete
+a pod from another application.
+
+```powershell
+$selectedPod = Read-Host 'Name of the workshop web pod to delete'
+kubectl get pod --namespace $env:LAB_NAMESPACE `
+    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME" `
+    --field-selector "metadata.name=$selectedPod"
+```
+
+Confirm that the command lists the selected web pod. If it does not, stop and
+select a pod from the earlier list. Delete only the matching pod:
+
+```powershell
+kubectl delete pod --namespace $env:LAB_NAMESPACE `
+    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME" `
+    --field-selector "metadata.name=$selectedPod"
+kubectl rollout status "deployment/$($env:LAB_WEB_NAME)" --namespace $env:LAB_NAMESPACE --timeout=10m
+kubectl get pods --namespace $env:LAB_NAMESPACE `
+    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME"
+```
+
+Confirm that the deleted pod name is gone, a new pod has appeared, and both
+web pods are ready.
 Restart the web port forward if it disconnected, then check the web page again.
 If replacement fails, inspect events and quota rather than assuming recovery.
 
@@ -119,5 +124,5 @@ claiming the conceptual agents were deployed.
 Keep the Azure environment for the remaining modules. Next, start with the
 original Caldova source and prepare it for AKS.
 
-[Next: modernize Caldova from source]({{ site.baseurl }}{% link appmod-lab/6-caldova-source-modernization/index.md %}) |
+[Next: modernize Caldova from source]({{ site.baseurl }}{% link appmod-lab/5-caldova-source-modernization/index.md %}) |
 [Workshop home]({{ site.baseurl }}{% link index.md %})

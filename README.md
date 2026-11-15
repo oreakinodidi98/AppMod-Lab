@@ -41,9 +41,10 @@ pwsh -NoProfile -File .\tests\site-links.Tests.ps1
 The site-link workflow runs these checks on pushes and pull requests. It rejects
 links that omit the project path or point to missing generated pages or files.
 
-Module 04 contains the Python and Java deployment choices and their shared
-deployment steps. The remaining flow is operations (05), Caldova source
-modernization (06), PetClinic (07), and cleanup (08).
+Module 03 contains the Azure environment setup, Python and Java deployment
+choices, and their shared build and deployment steps. The remaining flow is
+operations (04), Caldova source modernization (05), PetClinic (06), and cleanup
+(07).
 
 The [Naming page](appmod-lab/0-prerequisites/prerequisite-0-2-naming.md) defines
 the shared resource naming pattern. The instructions and reference scripts use
@@ -63,13 +64,13 @@ and refuses to overwrite existing files. When updating a starter file, update it
 manifest hash, the manifest hash in the downloader, and the downloader hash in the
 prerequisites together. Publish those changes before asking students to use them.
 
-Module 06 downloads the original Caldova source with `-Module caldova-source`.
-Module 07 uses a separate, facilitator-selected Spring PetClinic checkout; its
+Module 05 downloads the original Caldova source with `-Module caldova-source`.
+Module 06 uses a separate, facilitator-selected Spring PetClinic checkout; its
 assessment screenshots are in [`assets/images`](assets/images/).
 
 The copied [`AutomaticSetup.ps1`](assets/scripts/AutomaticSetup.ps1),
 [`ClassicSetup.ps1`](assets/scripts/ClassicSetup.ps1), and
 [`cleanup.ps1`](assets/scripts/cleanup.ps1) are demo references, not student setup
 commands. They can create or delete whole environments. The workshop uses module
-03 for Azure setup and module 08 for cleanup; the downloader does not copy these
+03 for Azure setup and module 07 for cleanup; the downloader does not copy these
 scripts into student repositories.

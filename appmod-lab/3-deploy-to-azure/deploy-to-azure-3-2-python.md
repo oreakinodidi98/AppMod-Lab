@@ -2,14 +2,14 @@
 title: Deploy and verify Python
 description: Build the Python Caldova API and web application and verify them on AKS.
 ms.topic: tutorial
-parent: Module 04 - Deploy the application to Azure
-nav_order: 1
+parent: Module 03 - Deploy to Azure
+nav_order: 2
 ---
 
 ## Goals
 
 Deploy the existing Python implementation to the environment from
-[module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %}). Verify that the application uses the
+[environment setup]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-1-environment.md %}). Verify that the application uses the
 seeded PostgreSQL database through Microsoft Entra Workload ID.
 
 ## 1. Understand the application
@@ -24,7 +24,7 @@ git status --short
 
 Review `Python_app/CaldovaClinicalApi/main.py`, the web application in
 `Python_app/CaldovaClinicalWeb/caldova_home.py`, and the database seed downloaded
-in module 03 at `Python_app/CaldovaClinicalApi/db/init.sql`.
+during environment setup at `Python_app/CaldovaClinicalApi/db/init.sql`.
 
 Trace a request from the browser to the web application, the `/materials` API, and
 PostgreSQL. Find the separate liveness and database-readiness endpoints. Identify
@@ -72,7 +72,7 @@ $env:LAB_WEB_REPOSITORY = "$($env:LAB_PREFIX)/python-web"
 Review the contents of both contexts before uploading them. The file list is not a
 substitute for secret scanning.
 
-Follow the [shared build and deployment exercise]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-caldova.md %}), then return
+Follow the [shared build and deployment exercise]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-4-deploy.md %}), then return
 here. It builds both images in your registry, deploys them to your namespace, and
 checks the actual database-backed inventory. The Python web application caches
 inventory responses for up to 30 seconds.
@@ -81,7 +81,7 @@ inventory responses for up to 30 seconds.
 
 If you also want to try Java, save the returned synthetic inventory in this
 PowerShell session after the shared exercise succeeds. Otherwise, continue to
-module 05:
+module 04:
 
 ```powershell
 $pythonInventorySnapshot = @(
@@ -99,6 +99,6 @@ Both Python pods are ready, `/health` reports a connected database, `/materials`
 returns all six seeded lots, and the web page displays the inventory. You can explain
 which identity connects to PostgreSQL and why readiness is separate from liveness.
 
-[Next: operate and improve]({{ site.baseurl }}{% link appmod-lab/5-operate-and-improve/index.md %}) |
-[Compare with Java]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-2-java.md %}) |
+[Next: operate and improve]({{ site.baseurl }}{% link appmod-lab/4-operate-and-improve/index.md %}) |
+[Compare with Java]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-3-java.md %}) |
 [Workshop home]({{ site.baseurl }}{% link index.md %})

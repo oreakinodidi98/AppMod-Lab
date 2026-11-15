@@ -23,7 +23,7 @@ You need:
     * [PowerShell 7.4 or later](https://learn.microsoft.com/powershell/scripting/install/install-powershell-on-windows), not Windows PowerShell 5.1.
     * [Maven 3](https://maven.apache.org/download.cgi). Choose a Maven 3 binary download, not Maven 4.
 
-    * A [Java 8 JDK](https://adoptium.net/temurin/releases/?version=8&os=windows&package=jdk) and a [JDK for your chosen upgrade target](https://adoptium.net/temurin/releases/?os=windows&package=jdk). Select the agreed version and a **JDK**, not a JRE. Install [JDK 17](https://adoptium.net/temurin/releases/?version=17&os=windows&package=jdk) as well if you choose the Java path in module 04.
+    * A [Java 8 JDK](https://adoptium.net/temurin/releases/?version=8&os=windows&package=jdk) and a [JDK for your chosen upgrade target](https://adoptium.net/temurin/releases/?os=windows&package=jdk). Select the agreed version and a **JDK**, not a JRE. Install [JDK 17](https://adoptium.net/temurin/releases/?version=17&os=windows&package=jdk) as well if you choose the Java path in module 03.
 
 * These command-line tools, available on your command path:
     * [Azure CLI 2.86.0 or later](https://learn.microsoft.com/cli/azure/install-azure-cli-windows).
@@ -40,9 +40,9 @@ You will need Docker and a local PostgreSQL server for the later modules below.
 
 Check these tools before the later modules:
 
-* [Module 06]({{ site.baseurl }}{% link appmod-lab/6-caldova-source-modernization/index.md %}) needs [Python 3.11 or later](https://www.python.org/downloads/windows/) and a local [PostgreSQL 15 or later server](https://www.postgresql.org/download/windows/).
+* [Module 05]({{ site.baseurl }}{% link appmod-lab/5-caldova-source-modernization/index.md %}) needs [Python 3.11 or later](https://www.python.org/downloads/windows/) and a local [PostgreSQL 15 or later server](https://www.postgresql.org/download/windows/).
 
-* [Module 07]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}) needs [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) with Linux containers, [Docker Compose](https://docs.docker.com/compose/install/) (included with Docker Desktop), the [Java Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack), and a [JDK compatible with the selected PetClinic version](https://adoptium.net/temurin/releases/?os=windows&package=jdk). Check the modernization extension's own JDK requirements too.
+* [Module 06]({{ site.baseurl }}{% link appmod-lab/6-petclinic-aks-automatic/index.md %}) needs [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) with Linux containers, [Docker Compose](https://docs.docker.com/compose/install/) (included with Docker Desktop), the [Java Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack), and a [JDK compatible with the selected PetClinic version](https://adoptium.net/temurin/releases/?os=windows&package=jdk). Check the modernization extension's own JDK requirements too.
 
 Check the commands in a new PowerShell session:
 

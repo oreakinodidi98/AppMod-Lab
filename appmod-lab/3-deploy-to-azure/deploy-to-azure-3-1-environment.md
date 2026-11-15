@@ -1,8 +1,8 @@
 ---
-title: Provision and configure the environment
-description: Provision a disposable AKS, ACR, PostgreSQL, and workload identity environment using participant-selected settings.
+title: Provision and configure the Azure environment
+description: Provision a disposable AKS, ACR, PostgreSQL, and workload identity .
 ms.topic: tutorial
-parent: Module 03 - Create the Azure environment
+parent: Module 03 - Deploy to Azure
 nav_order: 1
 ---
 
@@ -10,29 +10,37 @@ nav_order: 1
 
 Create a new, dedicated resource group containing an AKS Automatic cluster, an
 Azure Container Registry (ACR), Azure Database for PostgreSQL, and a user-assigned
-managed identity. Configure the identity so both Caldova implementations can read
-the same database without a stored database password.
+managed identity. Configure the identity for the app implementation later in this module.
 
 > [!WARNING]
 > These steps create billable resources and make role assignments. Use only a
 > subscription, region, network design, and budget approved for this workshop.
-> Do not use an existing resource group: [cleanup]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) deletes the
+> Do not use an existing resource group: [cleanup]({{ site.baseurl }}{% link appmod-lab/7-cleanup/index.md %}) deletes the
 > entire group and everything in it.
 
 The lab uses AKS Automatic's managed networking, a public AKS API, and a public
 PostgreSQL endpoint restricted to the workstation and AKS outbound IPv4 addresses.
 The applications are exposed locally through port forwarding, not a public
 application route. AKS Automatic can also provision managed ingress or Gateway
-resources; review its defaults and associated costs with the platform team. For
-production, decide on private networking, egress, availability zones, monitoring,
+resources; review its defaults and associated costs with the team. 
+
+For production, decide on private networking, egress, availability zones, monitoring,
 and access controls with the platform team before creating the cluster.
 
 ## 1. Select the subscription and lab settings
 
 Use the PowerShell terminal from [module 00]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}).
-Complete the [Naming page]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-2-naming.md %})
-first. Before provisioning, download the database seed, deployment template,
-and shared naming script into your own repository:
+Complete the [Naming page]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-2-naming.md %}) first. Before provisioning, download the database seed, deployment template, and shared naming script into your own repository:
+
+
+Before we begin lets create a new directory that can be a placeholder for all of our files created during this lab:
+
+mkdir -p ~/appmod-lab/deploy-to-azure
+cd ~/appmod-lab/deploy-to-azure
+
+Next, proceed by declaring the following environment variables:
+
+
 
 ```powershell
 Set-Location -LiteralPath $env:LAB_APP_REPO
@@ -40,7 +48,7 @@ Set-Location -LiteralPath $env:LAB_APP_REPO
 git status --short
 ```
 
-Review the three files. You will get your chosen application's files in module 04.
+Review the three files. You will get your chosen application's files in this module.
 The following setting makes native-command failures stop subsequent commands:
 
 ```powershell
@@ -65,10 +73,9 @@ if (-not $env:LAB_ADMIN_UPN -or -not $env:LAB_ADMIN_OBJECT_ID) {
 }
 ```
 
-Confirm the displayed subscription and tenant before continuing. Choose settings
-that your subscription, region, and budget permit. Check the
-[AKS Automatic region and CLI requirements](https://learn.microsoft.com/azure/aks/automatic/quick-automatic-managed-network)
-and the available PostgreSQL options with your facilitator.
+Confirm the displayed subscription and tenant before continuing. Choose settings that your subscription, region, and budget permit.
+
+Check the [AKS Automatic region and CLI requirements](https://learn.microsoft.com/azure/aks/automatic/quick-automatic-managed-network) and the available PostgreSQL options with your facilitator.
 
 ```powershell
 az account list-locations --query "[].{Name:name,Display:displayName}" --output table
@@ -277,52 +284,52 @@ if (-not $env:LAB_PG_HOST) { throw 'Could not resolve the PostgreSQL host.' }
 
 If creation fails, inspect the Azure error and the partially created resources.
 Do not assume the command rolled them back. Use the same resource group for
-[cleanup]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) when appropriate.
+[cleanup]({{ site.baseurl }}{% link appmod-lab/7-cleanup/index.md %}) when appropriate.
 
 ### Allow the cluster's outbound addresses
 
-AKS Automatic uses a managed NAT gateway for outbound traffic. The following
-commands discover the public IP resources attached to the gateway and add one
-PostgreSQL rule per address. They stop if the network uses a different outbound type
-or public IP prefixes. In that case, ask the network administrator for an approved
-design rather than opening a broad firewall rule.
+AKS Automatic uses a managed NAT gateway for outbound traffic. First inspect the
+cluster's outbound type and the NAT gateways attached to its subnets:
 
 ```powershell
-$outboundType = (az aks show --resource-group $env:LAB_RG --name $env:LAB_AKS `
-    --query networkProfile.outboundType --output tsv).Trim()
-if ($outboundType -notin @('managedNATGateway', 'managedNATGatewayV2')) {
-    throw "Unsupported outbound type for this exercise: $outboundType"
-}
-if (-not $env:LAB_NODE_RG) { throw 'Could not resolve the AKS node resource group.' }
-
-$natIds = @(az network vnet list --resource-group $env:LAB_NODE_RG `
-    --query "[].subnets[].natGateway.id" --output tsv |
-    Where-Object { $_ } | Sort-Object -Unique)
-if ($natIds.Count -eq 0) { throw 'No AKS NAT gateway was found.' }
-
-$egressIPs = @(
-    foreach ($natId in $natIds) {
-        $nat = az network nat gateway show --ids $natId --output json | ConvertFrom-Json
-        if (@($nat.publicIpPrefixes | Where-Object { $_ }).Count -gt 0) {
-            throw 'The NAT gateway uses an IP prefix. Ask the network administrator for approved firewall rules.'
-        }
-        foreach ($address in @($nat.publicIpAddresses | Where-Object { $_.id })) {
-            $ip = (az network public-ip show --ids $address.id --query ipAddress --output tsv).Trim()
-            if (-not $ip) { throw 'Could not resolve an AKS outbound public IP.' }
-            $ip
-        }
-    }
-)
-if ($egressIPs.Count -eq 0) { throw 'No AKS outbound public IPs were found.' }
-$ruleNumber = 0
-foreach ($ip in ($egressIPs | Sort-Object -Unique)) {
-    $ruleNumber++
-    az postgres flexible-server firewall-rule create --resource-group $env:LAB_RG `
-        --name "fwegress$ruleNumber-$($names.Stem)" --server-name $env:LAB_PG_SERVER `
-        --start-ip-address $ip --end-ip-address $ip --output none
-}
+az aks show --resource-group $env:LAB_RG --name $env:LAB_AKS `
+    --query networkProfile.outboundType --output tsv
+az network vnet list --resource-group $env:LAB_NODE_RG `
+    --query "[].subnets[].natGateway.id" --output tsv
 ```
 
+Confirm that the outbound type is `managedNATGateway` or `managedNATGatewayV2`
+and that at least one gateway ID is shown. If not, stop and ask the network
+administrator for an approved design. Enter a displayed gateway ID:
+
+```powershell
+$natId = Read-Host 'AKS subnet NAT gateway resource ID'
+az network nat gateway show --ids $natId `
+    --query "{Addresses:publicIpAddresses[].id,Prefixes:publicIpPrefixes[].id}" --output json
+```
+
+If a prefix is listed, stop and ask the network administrator for approved
+firewall rules. Otherwise, copy a public IP resource ID from `Addresses` and
+look up its address:
+
+```powershell
+$publicIpId = Read-Host 'NAT gateway public IP resource ID'
+az network public-ip show --ids $publicIpId --query ipAddress --output tsv
+```
+
+Confirm that the displayed address is an approved public IPv4 address. Add a
+firewall rule for that address:
+
+```powershell
+$egressIP = Read-Host 'Approved NAT gateway public IPv4 address'
+$ruleName = Read-Host 'Unique name for this egress firewall rule'
+az postgres flexible-server firewall-rule create --resource-group $env:LAB_RG `
+    --name $ruleName --server-name $env:LAB_PG_SERVER `
+    --start-ip-address $egressIP --end-ip-address $egressIP
+```
+
+Repeat the lookup and rule creation for every public IP on every listed NAT
+gateway. If an address is missing or cannot be verified, stop and investigate.
 The rules are only valid while these outbound addresses remain current. If your
 workstation IP or cluster egress changes, review the rules with the facilitator.
 Do not use the `0.0.0.0` Azure-services exception.
@@ -424,14 +431,14 @@ New-Item -ItemType Directory -Path $env:LAB_BUILD_ROOT | Out-Null
 "Temporary build directory: $env:LAB_BUILD_ROOT"
 ```
 
-Record this path for [cleanup]({{ site.baseurl }}{% link appmod-lab/8-cleanup/cleanup-8-1-resources.md %}).
+Record this path for [cleanup]({{ site.baseurl }}{% link appmod-lab/7-cleanup/cleanup-7-1-resources.md %}).
 
 ## Checkpoint
 
 You have a dedicated resource group, a reachable AKS cluster, a registry attached to
 that cluster, a seeded PostgreSQL database, and a service account federated with the
-managed identity. The next module builds and deploys an application to verify the
+managed identity. The next step builds and deploys an application to verify the
 end-to-end connection.
 
-[Next: deploy the application to Azure]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/index.md %}) |
+[Next: choose an application to deploy]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/index.md %}) |
 [Workshop home]({{ site.baseurl }}{% link index.md %})

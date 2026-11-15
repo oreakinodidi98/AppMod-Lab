@@ -2,30 +2,30 @@
 title: Run, assess, and modernize Caldova
 description: Run Caldova locally, then use Copilot to prepare and test its AKS migration.
 ms.topic: tutorial
-parent: Module 06 - Modernize Caldova
+parent: Module 05 - Modernize Caldova
 nav_order: 1
 ---
 
 ## Goals
 
 Run the Python Caldova app locally, then use Copilot to prepare it for AKS.
-Unlike module 04, this exercise starts without Dockerfiles,
+Unlike module 03, this exercise starts without Dockerfiles,
 Kubernetes manifests, or passwordless database support. You generate and validate
 those changes rather than starting with the already-modernized implementation.
 
 Allow 90-120 minutes, plus time to create the Azure environment. Complete
 [module 00]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/index.md %}) first. Before deploying, complete
-[module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %}), or ask your facilitator for a dedicated,
+[module 03]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/index.md %}), or ask your facilitator for a dedicated,
 approved environment with equivalent registry, database, and identity access.
 
 The starter app is stored in this lab's `assets/Scenario1App` folder.
 Download it into your own repository using the command below. Keep all changes
-inside `Scenario1App`; do not overwrite `Python_app`, which module 04 uses.
+inside `Scenario1App`; do not overwrite `Python_app`, which module 03 uses.
 
 > [!IMPORTANT]
 > Do not run `AutomaticSetup.ps1`, `ClassicSetup.ps1`, or `cleanup.ps1` from
 > `assets/scripts`. They are demo references, not the setup steps for this lab.
-> Use module 03 for the Azure environment and module 08 for cleanup. Use synthetic data,
+> Use module 03 for the Azure environment and module 07 for cleanup. Use synthetic data,
 > an approved budget, and a dedicated environment. This lab does not establish
 > production readiness by itself.
 
@@ -75,16 +75,20 @@ $pgBin = Read-Host 'Full path to your PostgreSQL bin directory'
 & (Join-Path $pgBin 'pg_isready.exe') --host 127.0.0.1 --port 5432
 ```
 
-PostgreSQL must report that it accepts connections. Create a disposable local
-`drugs` database if it does not exist, then initialize it:
+PostgreSQL must report that it accepts connections. Check whether a local
+database named `drugs` already exists:
 
 ```powershell
-$databaseExists = & (Join-Path $pgBin 'psql.exe') --host 127.0.0.1 `
+& (Join-Path $pgBin 'psql.exe') --host 127.0.0.1 `
     --username postgres --dbname postgres --tuples-only --no-align `
     --command "SELECT 1 FROM pg_database WHERE datname = 'drugs';"
-if (($databaseExists -join '').Trim() -ne '1') {
-    & (Join-Path $pgBin 'createdb.exe') --host 127.0.0.1 --username postgres drugs
-}
+```
+
+If the result is `1`, stop and check its owner and contents. Do not initialize
+an unrelated database. Otherwise, create the disposable database and initialize it:
+
+```powershell
+& (Join-Path $pgBin 'createdb.exe') --host 127.0.0.1 --username postgres drugs
 & (Join-Path $pgBin 'psql.exe') --host 127.0.0.1 --username postgres `
     --dbname drugs --set ON_ERROR_STOP=1 --file CaldovaClinicalApi\db\init.sql
 ```
@@ -130,26 +134,27 @@ expected results. Stop both services with Ctrl+C before changing the application
 
 ## 3. Run an assessment and review the plan
 
-In the terminal with your module 03 lab settings, generate names for this app's
-separate deployments and ConfigMap. They use the same naming values without
-replacing the app from module 04:
+In the terminal with your module 03 lab settings, choose separate deployment and
+ConfigMap names. These use the existing naming stem without replacing the app
+from module 03:
 
 ```powershell
-. (Join-Path $env:LAB_APP_REPO 'assets\scripts\lab-names.ps1')
-$sourceNames = Get-LabResourceNames -Application $env:LAB_APPLICATION -Environment $env:LAB_ENVIRONMENT `
-    -RegionCode $env:LAB_REGION_CODE -Owner $env:LAB_OWNER -Instance $env:LAB_INSTANCE -Location $env:LAB_LOCATION
-$sourceNames | Select-Object SourceApi, SourceWeb, SourceConfig, Namespace, ServiceAccount
+"Source API: apisrc-$env:LAB_PREFIX"
+"Source web: websrc-$env:LAB_PREFIX"
+"Source ConfigMap: cfgsrc-$env:LAB_PREFIX"
+"Namespace: $env:LAB_NAMESPACE"
+"Service account: $env:LAB_SERVICE_ACCOUNT"
 ```
 
 Open the application folder in VS Code. Use Copilot Chat agent mode to inspect the
-Python application; module 07 uses a different assessment flow for Java.
+Python application; module 06 uses a different assessment flow for Java.
 
 ```text
 Assess this Scenario1App folder for migration to our approved AKS environment.
 Preserve the pharmacy schema, API fields, inventory search, and status filtering.
 Identify configuration, dependency, container, identity, and health-probe gaps.
 The API currently uses DATABASE_URL and does not implement Entra authentication.
-Use the names displayed by the shared naming helper for deployments and config.
+Use the displayed source API, web, and ConfigMap names.
 Propose small changes, tests, and a way to roll back. Do not modify the
 other application copies, provision resources, or deploy. Wait for approval.
 ```
@@ -173,8 +178,8 @@ HTTP 503 for database failures. Generate namespace-scoped Kubernetes resources
 with services, probes, and resource requests/limits. Reuse the namespace and
 annotated service account from module 03 if that is our approved environment.
 Do not overwrite that service account or other apps' deployments.
-Use SourceApi and SourceWeb for deployment and service names, and SourceConfig
-for the ConfigMap. Apply the agreed owner and naming labels to the new objects.
+Use the displayed source API and web names for deployments and services, and the
+displayed source ConfigMap name. Apply the agreed owner and naming labels.
 Add regression checks for inventory responses and database failure behavior.
 Show the diff and validation results before any deployment.
 ```
@@ -206,7 +211,7 @@ or adding a service-account annotation alone is not sufficient.
 
 Commit the reviewed changes. Create clean, temporary build contexts from that
 commit, following the archive approach in
-[Python path in module 04]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-application-4-1-python.md %}),
+[Python path in module 03]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-2-python.md %}),
 but select the two components under `Scenario1App`. Check that your
 `.dockerignore` files exclude virtual environments, local secrets, and database
 dumps before uploading either context.
@@ -218,7 +223,7 @@ repositories, such as `"$($env:LAB_PREFIX)/caldova-source-api"` and
 `LAB_WEB_REPOSITORY`.
 
 Follow **step 1 only** of the
-[shared deployment exercise]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-caldova.md %})
+[shared deployment exercise]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-4-deploy.md %})
 to build the two images and record their digests. Put those digest-based image
 references in your generated manifests. Do not run its Caldova deployment
 template unless you have checked that your app supports all of its settings,
@@ -258,10 +263,10 @@ account, federation subject, client ID, database role, and TLS configuration.
 
 Stop port forwards and local services, and remove `DATABASE_URL` from the API
 terminal with `Remove-Item Env:DATABASE_URL`. Keep only sanitized review evidence.
-Keep the shared lab environment for PetClinic in module 07.
-After that, follow [module 08]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) for cleanup. Shared
+Keep the shared lab environment for PetClinic in module 06.
+After that, follow [module 07]({{ site.baseurl }}{% link appmod-lab/7-cleanup/index.md %}) for cleanup. Shared
 Gateways and platform resources must remain untouched; ask their owner to remove
 only the routes, grants, or DNS entries approved for this exercise.
 
-[Next: PetClinic on AKS Automatic]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}) |
+[Next: PetClinic on AKS Automatic]({{ site.baseurl }}{% link appmod-lab/6-petclinic-aks-automatic/index.md %}) |
 [Workshop home]({{ site.baseurl }}{% link index.md %})

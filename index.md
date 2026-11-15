@@ -44,18 +44,18 @@ pull request. Both need human review, but at different points.
 | [00 - Prepare]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/index.md %}) | Tools, access, your repository, and resource naming |
 | [01 - Interactive modernization]({{ site.baseurl }}{% link appmod-lab/1-interactive-modernization/index.md %}) | Run an assessment and review a Java upgrade plan |
 | [02 - Automated modernization]({{ site.baseurl }}{% link appmod-lab/2-automated-modernization/index.md %}) | Inspect a workflow run, result, and review gate |
-| [03 - Azure environment]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %}) | Create a dedicated AKS, registry, database, and identity |
-| [04 - Deploy the application to Azure]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/index.md %}) | Choose Python or Java, then build, deploy, and verify it |
-| [05 - Operate and improve]({{ site.baseurl }}{% link appmod-lab/5-operate-and-improve/index.md %}) | Inspect health and practice a human-triaged feedback loop |
-| [06 - Modernize Caldova from source]({{ site.baseurl }}{% link appmod-lab/6-caldova-source-modernization/index.md %}) | Assess the original Python app and prepare it for AKS |
-| [07 - Modernize PetClinic for AKS Automatic]({{ site.baseurl }}{% link appmod-lab/7-petclinic-aks-automatic/index.md %}) | Assess a different Java app and migrate it to AKS Automatic |
-| [08 - Cleanup]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) | Remove workshop resources and temporary credentials |
+| [03 - Deploy to Azure]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/index.md %}) | Provision the environment, then deploy the Python or Java app |
+| [04 - Operate and improve]({{ site.baseurl }}{% link appmod-lab/4-operate-and-improve/index.md %}) | Inspect health and practice a human-triaged feedback loop |
+| [05 - Modernize Caldova from source]({{ site.baseurl }}{% link appmod-lab/5-caldova-source-modernization/index.md %}) | Assess the original Python app and prepare it for AKS |
+| [06 - Modernize PetClinic for AKS Automatic]({{ site.baseurl }}{% link appmod-lab/6-petclinic-aks-automatic/index.md %}) | Assess a different Java app and migrate it to AKS Automatic |
+| [07 - Cleanup]({{ site.baseurl }}{% link appmod-lab/7-cleanup/index.md %}) | Remove workshop resources and temporary credentials |
 
 Each module has an overview page with links to its exercise files.
-Follow the modules in order. In module 04, choose either the Python or Java
-path; both use the [shared deployment steps]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-caldova.md %}).
+Follow the modules in order. In module 03, first provision the Azure
+environment, then choose either the Python or Java path. Both use the
+[shared build and deployment steps]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-4-deploy.md %}).
 You can deploy both if you want to compare them, but one working deployment is
-enough to continue to module 05.
+enough to continue to module 04.
 
 ## Application source
 
@@ -73,10 +73,10 @@ The workshop intentionally uses a public AKS API endpoint, a PostgreSQL public e
 
 ## Plan your time
 
-Agree on a schedule with your facilitator. For Modules 06 and 07 allow about 90-120 minutes for Caldova source modernization and 120-150 minutes for PetClinic, in addition to the earlier modules and Azure setup time. You may want to split the workshop across sessions.
+Agree on a schedule with your facilitator. For Modules 05 and 06 allow about 90-120 minutes for Caldova source modernization and 120-150 minutes for PetClinic, in addition to the earlier modules and Azure setup time. You may want to split the workshop across sessions.
 
-Keep the Azure environment until the end of module 07, then complete cleanup in
-module 08. If you pause between sessions, agree on who owns the resources, the
+Keep the Azure environment until the end of module 06, then complete cleanup in
+module 07. If you pause between sessions, agree on who owns the resources, the
 cost limit, and when they will be deleted.
 
 ## Facilitator resources

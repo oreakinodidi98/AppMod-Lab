@@ -2,7 +2,7 @@
 title: Remove and verify workshop resources
 description: Remove the dedicated Azure resource group, temporary files, and workshop credentials.
 ms.topic: tutorial
-parent: Module 08 - Clean up the workshop
+parent: Module 07 - Clean up the workshop
 nav_order: 1
 ---
 
@@ -12,9 +12,9 @@ Stop the port forwards, delete the dedicated lab resources, verify deletion, and
 remove temporary access. If the environment must be retained, agree on an owner,
 cost limit, and deletion time instead of leaving it unattended.
 
-Finish all modules before deleting the shared environment. For module 06,
+Finish all modules before deleting the shared environment. For module 05,
 stop both local Python services and remove `DATABASE_URL` from their terminal.
-For module 07, stop PetClinic and run `docker compose down` from its checkout.
+For module 06, stop PetClinic and run `docker compose down` from its checkout.
 Remove datasource password variables and review any local database volumes or
 dumps before deleting them. Do not stop or delete unrelated local databases.
 Do not use the copied `assets/scripts/cleanup.ps1` for workshop cleanup.

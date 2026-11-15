@@ -2,7 +2,7 @@
 title: Assess and migrate PetClinic
 description: Assess Spring PetClinic, review a passwordless PostgreSQL migration, and validate an AKS Automatic deployment.
 ms.topic: tutorial
-parent: Module 07 - Modernize to AKS Automatic
+parent: Module 06 - Modernize to AKS Automatic
 nav_order: 1
 ---
 
@@ -64,27 +64,29 @@ Review the selected checkout's README, Maven configuration, PostgreSQL profile,
 and Compose file. Sign in to Copilot in the new VS Code window. Select a model
 permitted by your organization; a particular model is not required.
 
-For deployment, use [module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %})
+For deployment, use [module 03]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/index.md %})
 to create a dedicated environment, or agree on an equivalent with your facilitator.
 You can reuse the lab cluster, registry, and PostgreSQL server, but PetClinic
 needs its own database, namespace, and reviewed identity setup. Do not import its
 schema into Caldova's database or reuse Caldova's read-only grants: PetClinic
 also writes records.
 
-In the terminal with your module 03 lab settings, generate PetClinic's separate
-names using the same values:
+In the terminal with your module 03 lab settings, display PetClinic's separate
+names using the same naming stem:
 
 ```powershell
-. (Join-Path $env:LAB_APP_REPO 'assets\scripts\lab-names.ps1')
-$petclinicNames = Get-LabResourceNames -Application $env:LAB_APPLICATION -Environment $env:LAB_ENVIRONMENT `
-    -RegionCode $env:LAB_REGION_CODE -Owner $env:LAB_OWNER -Instance $env:LAB_INSTANCE -Location $env:LAB_LOCATION
-$petclinicNames | Select-Object PetClinicDatabase, PetClinicNamespace, PetClinicIdentity, `
-    PetClinicServiceAccount, PetClinicFederation, PetClinicApp, PetClinicConfig
+"Database: dbpc$env:LAB_SUFFIX"
+"Namespace: nspc-$env:LAB_PREFIX"
+"Identity: idpc-$env:LAB_PREFIX"
+"Service account: sapc-$env:LAB_PREFIX"
+"Federation: ficpc-$env:LAB_PREFIX"
+"Application: apppc-$env:LAB_PREFIX"
+"ConfigMap: cfgpc-$env:LAB_PREFIX"
 ```
 
 Use these names in the approved plan and generated deployment files. Use
-`PetClinicApp` for both the deployment and service, and `PetClinicConfig` for the
-ConfigMap. The `dbpc`, `nspc`, `idpc`, `sapc`, and `ficpc` prefixes keep PetClinic separate from Caldova
+the application name for both the deployment and service, and the displayed
+ConfigMap name for the ConfigMap. The `dbpc`, `nspc`, `idpc`, `sapc`, and `ficpc` prefixes keep PetClinic separate from Caldova
 without changing the agreed application, environment, region, owner, or instance.
 If you opened a new terminal, restore the module 03 settings from your private
 notes first.
@@ -226,7 +228,7 @@ the configuration and discuss the gap; do not manufacture a vulnerability.
 ```text
 Plan a migration of this PetClinic checkout to our approved AKS Automatic
 environment and a dedicated Azure PostgreSQL database using Entra Workload ID.
-Use the PetClinic names displayed by the shared naming helper. Apply our agreed
+Use the PetClinic names displayed above. Apply our agreed
 application, environment, region, owner, and instance tags to new Azure resources.
 Preserve owner, pet, visit, and veterinarian behavior. Include token renewal,
 TLS verification, least-privilege database grants, data transfer and validation,
@@ -269,7 +271,7 @@ initialization for the migrated database and preserve a rollback copy.
 Confirm the subscription, cluster context, namespace permissions, database
 network path, registry pull access, and federation subject. Build in ACR and
 record an immutable image digest using the approach in the
-[deployment exercise]({{ site.baseurl }}{% link appmod-lab/4-deploy-application/deploy-caldova.md %}),
+[deployment exercise]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-4-deploy.md %}),
 but use only its build and digest approach, adapted for PetClinic's single app
 image. Do not run its two-image build commands unchanged or use its Caldova-specific
 manifests, environment variables, or schema. Review a server-side dry run of
@@ -312,9 +314,9 @@ Stop the port forward with Ctrl+C. In the PetClinic checkout, run
 Remove password environment variables from the application terminal. Delete only
 your lab's database volumes or private dumps once they are no longer needed.
 
-For resources created through module 03, follow [module 08]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) after
+For resources created through module 03, follow [module 07]({{ site.baseurl }}{% link appmod-lab/7-cleanup/index.md %}) after
 all exercises sharing the environment are finished. For a facilitator-owned
 environment, hand the owner an inventory of PetClinic resources, grants, and
 connections to remove; do not delete the shared resource group.
 
-[Next: clean up]({{ site.baseurl }}{% link appmod-lab/8-cleanup/index.md %}) | [Workshop home]({{ site.baseurl }}{% link index.md %})
+[Next: clean up]({{ site.baseurl }}{% link appmod-lab/7-cleanup/index.md %}) | [Workshop home]({{ site.baseurl }}{% link index.md %})

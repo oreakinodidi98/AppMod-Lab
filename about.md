@@ -38,7 +38,7 @@ your facilitator; the full workshop can be split across sessions.
 
 Create your own workshop repository and download the starter files as each lab
 needs them. You do not need to fork or clone this lab repository. PetClinic is the
-exception: module 07 uses a separate upstream checkout.
+exception: module 06 uses a separate upstream checkout.
 
 [View the workshop modules]({{ site.baseurl }}{% link index.md %})
 
@@ -61,8 +61,8 @@ The workshop uses these apps:
 
 * [Java todo app](https://github.com/oreakinodidi98/AppMod-Lab/tree/main/assets/src): the starting point for the interactive and automated upgrades.
 * [Caldova Python](https://github.com/oreakinodidi98/AppMod-Lab/tree/main/assets/Python_app) and [Caldova Java](https://github.com/oreakinodidi98/AppMod-Lab/tree/main/assets/Java_app): two versions of the same inventory app.
-* [Caldova source app](https://github.com/oreakinodidi98/AppMod-Lab/tree/main/assets/Scenario1App): the version you prepare for AKS in module 06.
-* [Spring PetClinic](https://github.com/spring-projects/spring-petclinic): the separate Java app used in module 07.
+* [Caldova source app](https://github.com/oreakinodidi98/AppMod-Lab/tree/main/assets/Scenario1App): the version you prepare for AKS in module 05.
+* [Spring PetClinic](https://github.com/spring-projects/spring-petclinic): the separate Java app used in module 06.
 
 Use synthetic data only. These are learning exercises, not production-ready
 deployment templates.
@@ -72,7 +72,7 @@ deployment templates.
 For diagrams showing a production AKS design, see the
 [AKS baseline architecture](https://learn.microsoft.com/azure/architecture/reference-architectures/containers/aks/baseline-aks).
 Compare it with the simpler environment you create in
-[module 03]({{ site.baseurl }}{% link appmod-lab/3-azure-environment/index.md %}).
+[module 03]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/index.md %}).
 This workshop uses public endpoints with restricted access and local port
 forwarding; it does not implement that production architecture.
 
