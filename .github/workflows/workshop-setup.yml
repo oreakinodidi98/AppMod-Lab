@@ -9,8 +9,7 @@ on:
       - 'assets/Java_app/**'
       - 'assets/Scenario1App/**'
       - 'assets/k8s/caldova.yaml'
-      - 'appmod-lab/0-prerequisites/prerequisite-0-1-technical.md'
-      - 'appmod-lab/0-prerequisites/prerequisite-0-2-naming.md'
+      - 'appmod-lab/**'
       - 'tests/get-lab-files.Tests.ps1'
       - '.github/workflows/workshop-setup.yml'
   pull_request:
@@ -21,8 +20,7 @@ on:
       - 'assets/Java_app/**'
       - 'assets/Scenario1App/**'
       - 'assets/k8s/caldova.yaml'
-      - 'appmod-lab/0-prerequisites/prerequisite-0-1-technical.md'
-      - 'appmod-lab/0-prerequisites/prerequisite-0-2-naming.md'
+      - 'appmod-lab/**'
       - 'tests/get-lab-files.Tests.ps1'
       - '.github/workflows/workshop-setup.yml'
   workflow_dispatch:

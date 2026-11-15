@@ -162,10 +162,10 @@ branch. Choose the option that matches where you are:
 * **Completed module 01:** Return to the default branch where you saved the
   original todo app.
 
-First, make sure you've completed the [repository and setup instructions in
+First, make sure you've completed the [repository instructions in
 module 00]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}#create-your-workshop-repository).
 If you've opened a new PowerShell terminal, repeat those instructions to set
-`LAB_APP_REPO` and download, verify, and review the setup script again.
+`LAB_APP_REPO` again. No setup script is needed.
 
 ### Option 1: Start fresh
 
@@ -182,7 +182,57 @@ Confirm you're on your default branch and have no unrelated changes. Then
 download the todo app:
 
 ```powershell
-& $env:LAB_SETUP -Module todo
+Set-Location -LiteralPath $env:LAB_APP_REPO
+New-Item -ItemType Directory -Path `
+  'src\src\main\java\com\example\todo\todo', `
+  'src\src\main\resources\static\css', `
+  'src\src\main\resources\templates', `
+  'src\src\test\java\com\example\todo\todo' `
+  -Force | Out-Null
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/pom.xml' `
+  -OutFile 'src\pom.xml'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/java/com/example/todo/todo/Todo.java' `
+  -OutFile 'src\src\main\java\com\example\todo\todo\Todo.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/java/com/example/todo/todo/TodoController.java' `
+  -OutFile 'src\src\main\java\com\example\todo\todo\TodoController.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/java/com/example/todo/todo/TodoForm.java' `
+  -OutFile 'src\src\main\java\com\example\todo\todo\TodoForm.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/java/com/example/todo/todo/TodoRepository.java' `
+  -OutFile 'src\src\main\java\com\example\todo\todo\TodoRepository.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/java/com/example/todo/TodoApplication.java' `
+  -OutFile 'src\src\main\java\com\example\todo\TodoApplication.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/resources/application.properties' `
+  -OutFile 'src\src\main\resources\application.properties'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/resources/static/css/app.css' `
+  -OutFile 'src\src\main\resources\static\css\app.css'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/resources/templates/todos.html' `
+  -OutFile 'src\src\main\resources\templates\todos.html'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/test/java/com/example/todo/todo/TodoControllerTest.java' `
+  -OutFile 'src\src\test\java\com\example\todo\todo\TodoControllerTest.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/test/java/com/example/todo/todo/TodoRepositoryTest.java' `
+  -OutFile 'src\src\test\java\com\example\todo\todo\TodoRepositoryTest.java'
 git status --short
 ```
 
@@ -195,8 +245,9 @@ git commit -m "Add todo application for workshop"
 git push
 ```
 
-If `src` already exists, the setup script will stop rather than overwrite it.
-Review the existing folder before continuing.
+Direct downloads replace existing files. If `src` already exists, skip the
+download block and review the existing folder before continuing; do not
+overwrite your modernization work.
 
 ### Option 2: Continue from module 01
 

@@ -6,7 +6,7 @@ nav_order: 4
 
 Provision and configure the Azure environment, then choose which Caldova
 application to deploy. You can deploy Python or Java; both use the same
-PostgreSQL database, workload identity, and shared build and deployment steps.
+PostgreSQL database, workload identity, and shared deployment steps.
 
 These steps create billable resources. Complete the
 [prerequisites]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/index.md %})
@@ -18,7 +18,7 @@ and agree on permissions, cost, and cleanup ownership before starting.
 2. Choose one application path:
    * [Deploy Python]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-2-python.md %})
    * [Test and deploy Java]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-3-java.md %})
-3. Follow the [shared build, deploy, and verification steps]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-4-deploy.md %}).
+3. Follow the [shared deployment and verification steps]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-4-deploy.md %}). Both paths start at step 2 after their local builds, scans, and pushes.
 
 You only need one application path to continue to
 [module 04 - Operate and improve]({{ site.baseurl }}{% link appmod-lab/4-operate-and-improve/index.md %}).

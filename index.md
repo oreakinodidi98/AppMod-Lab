@@ -53,7 +53,7 @@ pull request. Both need human review, but at different points.
 Each module has an overview page with links to its exercise files.
 Follow the modules in order. In module 03, first provision the Azure
 environment, then choose either the Python or Java path. Both use the
-[shared build and deployment steps]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-4-deploy.md %}).
+[shared deployment steps]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-4-deploy.md %}).
 You can deploy both if you want to compare them, but one working deployment is
 enough to continue to module 04.
 

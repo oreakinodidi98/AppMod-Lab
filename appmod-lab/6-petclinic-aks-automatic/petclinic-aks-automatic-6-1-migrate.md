@@ -71,25 +71,34 @@ needs its own database, namespace, and reviewed identity setup. Do not import it
 schema into Caldova's database or reuse Caldova's read-only grants: PetClinic
 also writes records.
 
-In the terminal with your module 03 lab settings, display PetClinic's separate
-names using the same naming stem:
+In the PowerShell terminal from module 03, define PetClinic's separate names
+using the same randomized naming stem. These keep its writable database and
+workload separate from Caldova:
 
 ```powershell
-"Database: dbpc$env:LAB_SUFFIX"
-"Namespace: nspc-$env:LAB_PREFIX"
-"Identity: idpc-$env:LAB_PREFIX"
-"Service account: sapc-$env:LAB_PREFIX"
-"Federation: ficpc-$env:LAB_PREFIX"
-"Application: apppc-$env:LAB_PREFIX"
-"ConfigMap: cfgpc-$env:LAB_PREFIX"
+$env:PETCLINIC_DATABASE_NAME = "dbpc$env:NAME_SUFFIX"
+$env:PETCLINIC_NAMESPACE = "nspc-$env:NAME_PREFIX"
+$env:PETCLINIC_IDENTITY_NAME = "idpc-$env:NAME_PREFIX"
+$env:PETCLINIC_SERVICE_ACCOUNT_NAME = "sapc-$env:NAME_PREFIX"
+$env:PETCLINIC_FEDERATED_CREDENTIAL_NAME = "ficpc-$env:NAME_PREFIX"
+$env:PETCLINIC_APP_NAME = "apppc-$env:NAME_PREFIX"
+$env:PETCLINIC_CONFIG_NAME = "cfgpc-$env:NAME_PREFIX"
+"Database: $env:PETCLINIC_DATABASE_NAME"
+"Namespace: $env:PETCLINIC_NAMESPACE"
+"Identity: $env:PETCLINIC_IDENTITY_NAME"
+"Service account: $env:PETCLINIC_SERVICE_ACCOUNT_NAME"
+"Federation: $env:PETCLINIC_FEDERATED_CREDENTIAL_NAME"
+"Application: $env:PETCLINIC_APP_NAME"
+"ConfigMap: $env:PETCLINIC_CONFIG_NAME"
 ```
 
-Use these names in the approved plan and generated deployment files. Use
+Use these variables in the approved plan and generated deployment files. Use
 the application name for both the deployment and service, and the displayed
 ConfigMap name for the ConfigMap. The `dbpc`, `nspc`, `idpc`, `sapc`, and `ficpc` prefixes keep PetClinic separate from Caldova
 without changing the agreed application, environment, region, owner, or instance.
-If you opened a new terminal, restore the module 03 settings from your private
-notes first.
+If you opened a new terminal, manually restore the needed PowerShell variables
+from `.envrc` before defining these PetClinic-specific values. The file uses
+`export NAME=value` lines for reference; it is not a PowerShell script.
 
 > [!WARNING]
 > Azure resources and image builds incur charges. You do not need to grant

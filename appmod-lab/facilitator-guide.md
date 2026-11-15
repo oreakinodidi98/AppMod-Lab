@@ -11,9 +11,9 @@ Meet the customer ahead of time to agree on the application story, participant
 experience, approved subscription and region, spending limit, resource ownership,
 and deletion time. Review the [prerequisites]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/index.md %}) together.
 
-Agree on each participant's owner code and instance on the
+Agree on each participant's owner and region codes on the
 [Naming page]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-2-naming.md %}).
-Use different values where names would clash. `sc` means Sweden Central; check that
+Module 03 also adds a random suffix. `sc` means Sweden Central; check that
 the selected services and quota are available there before accepting that default.
 
 Participants create their own disposable repository and download the files needed

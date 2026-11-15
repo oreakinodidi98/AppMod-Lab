@@ -18,9 +18,9 @@ Allow 90-120 minutes, plus time to create the Azure environment. Complete
 [module 03]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/index.md %}), or ask your facilitator for a dedicated,
 approved environment with equivalent registry, database, and identity access.
 
-The starter app is stored in this lab's `assets/Scenario1App` folder.
-Download it into your own repository using the command below. Keep all changes
-inside `Scenario1App`; do not overwrite `Python_app`, which module 03 uses.
+The direct downloads below put the starter app into `Scenario1App` in your
+repository. Keep all changes inside
+`Scenario1App`; do not overwrite `Python_app`, which module 03 uses.
 
 > [!IMPORTANT]
 > Do not run `AutomaticSetup.ps1`, `ClassicSetup.ps1`, or `cleanup.ps1` from
@@ -33,13 +33,53 @@ inside `Scenario1App`; do not overwrite `Python_app`, which module 03 uses.
 
 Use the PowerShell 7.4 or later terminal from module 00. Install Python 3.11 or
 later and PostgreSQL 15 or later before starting.
+If you restarted PowerShell, restore `LAB_APP_REPO` using
+[module 00]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}#create-your-workshop-repository).
+Downloads replace existing files; skip this block if you already downloaded
+the app, especially if you have started modernizing it.
 
 ```powershell
 Set-Location -LiteralPath $env:LAB_APP_REPO
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
-& $env:LAB_SETUP -Module caldova-source
+New-Item -ItemType Directory -Path `
+  'Scenario1App\CaldovaClinicalApi\db', `
+  'Scenario1App\CaldovaClinicalWeb' `
+  -Force | Out-Null
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/Scenario1App/.gitignore' `
+  -OutFile 'Scenario1App\.gitignore'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/Scenario1App/CaldovaClinicalApi/main.py' `
+  -OutFile 'Scenario1App\CaldovaClinicalApi\main.py'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/Scenario1App/CaldovaClinicalApi/requirements.txt' `
+  -OutFile 'Scenario1App\CaldovaClinicalApi\requirements.txt'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/Scenario1App/CaldovaClinicalApi/db/init.sql' `
+  -OutFile 'Scenario1App\CaldovaClinicalApi\db\init.sql'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/Scenario1App/CaldovaClinicalWeb/app.py' `
+  -OutFile 'Scenario1App\CaldovaClinicalWeb\app.py'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/Scenario1App/CaldovaClinicalWeb/caldova_home.py' `
+  -OutFile 'Scenario1App\CaldovaClinicalWeb\caldova_home.py'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/Scenario1App/CaldovaClinicalWeb/requirements.txt' `
+  -OutFile 'Scenario1App\CaldovaClinicalWeb\requirements.txt'
 git status --short
+```
+
+Move into the downloaded application and check Python:
+
+```powershell
 $source = Join-Path $env:LAB_APP_REPO 'Scenario1App'
 Set-Location -LiteralPath $source
 python --version
@@ -134,16 +174,19 @@ expected results. Stop both services with Ctrl+C before changing the application
 
 ## 3. Run an assessment and review the plan
 
-In the terminal with your module 03 lab settings, choose separate deployment and
-ConfigMap names. These use the existing naming stem without replacing the app
-from module 03:
+Use the PowerShell terminal from module 03 so its environment settings remain
+available. Give this source-modernization exercise separate deployments and a
+ConfigMap, while reusing its approved namespace and service account:
 
 ```powershell
-"Source API: apisrc-$env:LAB_PREFIX"
-"Source web: websrc-$env:LAB_PREFIX"
-"Source ConfigMap: cfgsrc-$env:LAB_PREFIX"
-"Namespace: $env:LAB_NAMESPACE"
-"Service account: $env:LAB_SERVICE_ACCOUNT"
+$env:SOURCE_API_NAME = "apisrc-$env:NAME_PREFIX"
+$env:SOURCE_WEB_NAME = "websrc-$env:NAME_PREFIX"
+$env:SOURCE_CONFIG_NAME = "cfgsrc-$env:NAME_PREFIX"
+"Source API: $env:SOURCE_API_NAME"
+"Source web: $env:SOURCE_WEB_NAME"
+"Source ConfigMap: $env:SOURCE_CONFIG_NAME"
+"Namespace: $env:MANAGED_NAMESPACE_NAME"
+"Service account: $env:SERVICE_ACCOUNT_NAME"
 ```
 
 Open the application folder in VS Code. Use Copilot Chat agent mode to inspect the
@@ -209,18 +252,29 @@ or adding a service-account annotation alone is not sufficient.
 
 ## 5. Build, deploy, and verify
 
-Commit the reviewed changes. Create clean, temporary build contexts from that
-commit, following the archive approach in
-[Python path in module 03]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-2-python.md %}),
-but select the two components under `Scenario1App`. Check that your
-`.dockerignore` files exclude virtual environments, local secrets, and database
-dumps before uploading either context.
+Commit the reviewed changes, then create temporary build contexts from the
+committed source. These commands copy only the API and web application folders
+into the temporary build directory:
 
-In the terminal with your module 03 settings, set `LAB_API_CONTEXT` and
-`LAB_WEB_CONTEXT` to those temporary component folders. Use separate image
-repositories, such as `"$($env:LAB_PREFIX)/caldova-source-api"` and
-`"$($env:LAB_PREFIX)/caldova-source-web"`, for `LAB_API_REPOSITORY` and
-`LAB_WEB_REPOSITORY`.
+```powershell
+Set-Location -LiteralPath $env:LAB_APP_REPO
+New-Item -ItemType Directory -Path $env:BUILD_ROOT -Force | Out-Null
+if (Test-Path -LiteralPath (Join-Path $env:BUILD_ROOT 'Scenario1App')) {
+    throw 'Source build contexts already exist. Review them before recreating them.'
+}
+$archive = Join-Path $env:BUILD_ROOT 'source-caldova.tar'
+git archive --format=tar --output $archive HEAD -- `
+    Scenario1App/CaldovaClinicalApi Scenario1App/CaldovaClinicalWeb
+tar -xf $archive -C $env:BUILD_ROOT
+Remove-Item -LiteralPath $archive
+$env:API_BUILD_CONTEXT = Join-Path $env:BUILD_ROOT 'Scenario1App\CaldovaClinicalApi'
+$env:WEB_BUILD_CONTEXT = Join-Path $env:BUILD_ROOT 'Scenario1App\CaldovaClinicalWeb'
+$env:API_IMAGE_REPOSITORY = "$env:NAME_PREFIX/caldova-source-api"
+$env:WEB_IMAGE_REPOSITORY = "$env:NAME_PREFIX/caldova-source-web"
+```
+
+Check that both `.dockerignore` files exclude virtual environments, local
+secrets, and database dumps before uploading either context.
 
 Follow **step 1 only** of the
 [shared deployment exercise]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-4-deploy.md %})

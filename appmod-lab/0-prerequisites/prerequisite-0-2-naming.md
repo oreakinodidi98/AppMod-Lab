@@ -7,106 +7,48 @@ nav_order: 2
 
 ## Naming conventions
 
-Before deploying any Azure services, choose the names you will use throughout
-the workshop. This follows the
-[Azure naming guidance](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming).
-
-We include the application, environment, region, owner, and instance number.
-Start with these defaults:
-
-| Setting | Default | Meaning |
-| --- | --- | --- |
-| Application | `hol` | Hands On Lab |
-| Environment | `dev` | Development |
-| Region | `sc` | Sweden Central (`swedencentral` in Azure CLI) |
-| Owner | `oa` | Lab owner code |
-| Instance | `01` | Two-digit instance number |
-
-Use your own short owner code or a different instance if you share a subscription.
-Some names, including ACR, PostgreSQL, storage, and Key Vault names, must be
-globally unique. The default names are examples, not reserved names.
-Use codes, not personal or sensitive information.
-
-For services that allow dashes:
+Module 03 creates names using an owner code, environment, region code, and
+random suffix. Choose the codes with your facilitator before creating resources:
 
 ```text
-<service-prefix>-<environment>-<region>-<application-name>-<owner>-<instance>
+<owner>-<environment>-<region>-<random-suffix>
 ```
 
-For services that allow only letters and numbers:
+For example, `oa-dev-sc-123456` uses owner code `oa`, development, and Sweden
+Central. A participant using `mw` in West US could use `mw-dev-usw-123456`.
+These are examples, not reserved names. Use a short code rather than a full
+name or sensitive information.
 
-```text
-<service-prefix><environment><region><application-name><owner><instance>
-```
+In module 03, edit `oa-dev-sc` in `$env:NAME_PREFIX` and set `$env:LOCATION`
+to the corresponding approved Azure location. For example, use `westus` for
+West US. The command adds a random six-digit suffix; keep it so participants
+are less likely to choose the same resource names.
 
-With the defaults, the names are:
+Use a two-character owner code, `dev` for this workshop, and a two- or
+three-character region code. Use lowercase letters and numbers only in the
+codes. Module 03 adds service prefixes and removes hyphens for the container
+registry, which permits only letters and numbers:
 
-| Resource | Name |
+| Resource | Example |
 | --- | --- |
-| Resource group | `rg-dev-sc-hol-oa-01` |
-| AKS cluster | `aks-dev-sc-hol-oa-01` |
-| Container registry | `crdevscholoa01` |
-| PostgreSQL server | `psql-dev-sc-hol-oa-01` |
-| Caldova database | `dbdevscholoa01` |
-| Managed identity | `id-dev-sc-hol-oa-01` |
-| Key Vault, in the reference scripts | `kv-dev-sc-hol-oa-01` |
-| Storage account example | `stdevscholoa01` |
+| Resource group | `rg-oa-dev-sc-123456` |
+| AKS cluster | `aks-oa-dev-sc-123456` |
+| PostgreSQL server | `pg-oa-dev-sc-123456` |
+| Managed identity | `mi-oa-dev-sc-123456` |
+| Container registry | `acroadevsc123456` |
+| Key Vault | `kv-oa-dev-sc-123456` |
 
-The workshop does not create a storage account. It is included to show the
-no-dashes format. The provisioning commands also add `application`,
-`environment`, `region`, `owner`, and `instance` tags to the top-level resources they create.
+Registry, PostgreSQL, and Key Vault names must be globally unique. A random
+suffix reduces collisions but does not guarantee availability. If a name is
+already taken, choose a new suffix before creating resources; do not reuse
+another participant's resources. Record the actual values saved in `.envrc`
+for later steps and cleanup.
 
-### Choose your values
-
-Run this in the same PowerShell terminal you used for setup. Press Enter to
-accept each default. Keep the instance as two digits, such as `01` or `02`.
-Use lowercase letters and numbers for the other codes, starting with a letter.
-
-```powershell
-$defaults = [ordered]@{
-    LAB_APPLICATION = 'hol'
-    LAB_ENVIRONMENT = 'dev'
-    LAB_REGION_CODE = 'sc'
-    LAB_OWNER = 'oa'
-    LAB_INSTANCE = '01'
-    LAB_LOCATION = 'swedencentral'
-}
-foreach ($entry in $defaults.GetEnumerator()) {
-    $value = Read-Host "$($entry.Key) [$($entry.Value)]"
-    if ([string]::IsNullOrWhiteSpace($value)) { $value = $entry.Value }
-    Set-Item -Path "Env:$($entry.Key)" -Value $value
-}
-```
-
-Have the facilitator approve the region. If you change it, update both its short
-code and Azure CLI location; `sc` always means `swedencentral`.
-Record the chosen values with your other lab settings. Keep the same values
-until cleanup. If a global name is taken, choose another owner or instance
-**before** creating any resources; do not silently reuse an existing resource.
-
-These names apply to new deployments. Changing the naming settings does not
-rename existing Azure resources. If you already created an environment using
-the previous names, keep its recorded names and confirm cleanup with its owner
-before starting a new deployment.
-
-### How the scripts use these names
-
-Module 03 downloads `assets/scripts/lab-names.ps1` into your workshop repository.
-The deployment instructions and both reference setup scripts use its
-`Get-LabResourceNames` function, so names are generated in one place. It rejects
-invalid codes and names that are too long instead of shortening them silently.
-The cleanup steps check the recorded resource group against the same pattern.
-
-The reference scripts accept `-Application`, `-Environment`, `-RegionCode`,
-`-Owner`, `-Instance`, and `-Location`. Their defaults match the table above.
-They remain reference scripts, not the student provisioning path.
-
-Some Azure resources have stricter rules. AKS node pool names are limited to
-12 characters for Linux, so the classic reference script uses `sys01` and
-`usr01`, based on the instance. Azure-managed resources, such as the AKS node
-resource group and automatic monitoring resources, can have service-generated
-names. Record those actual names rather than trying to rename them.
-See the [service naming rules](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules).
+For existing environments, keep their recorded names; changing these examples
+does not rename resources. Azure-managed resources such as the AKS node
+resource group may have service-generated names. See the
+[Azure resource naming rules](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules)
+for service-specific restrictions.
 
 [Next: interactive modernization]({{ site.baseurl }}{% link appmod-lab/1-interactive-modernization/index.md %}) |
 [Workshop home]({{ site.baseurl }}{% link index.md %})

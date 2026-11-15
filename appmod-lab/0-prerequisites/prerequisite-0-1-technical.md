@@ -40,6 +40,10 @@ You will need Docker and a local PostgreSQL server for the later modules below.
 
 Check these tools before the later modules:
 
+* The [Python path in module 03]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-2-python.md %}) needs [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) with Linux containers, [Trivy](https://trivy.dev/latest/getting-started/installation/), Python 3.11, and a local PostgreSQL 15 or later server. Docker and Trivy need access to approved base images, packages, and vulnerability databases. You also need permission to push and read images in the workshop registry.
+
+* The [Java path in module 03]({{ site.baseurl }}{% link appmod-lab/3-deploy-to-azure/deploy-to-azure-3-3-java.md %}) also needs Docker Desktop with Linux containers, Trivy, access to the required base images and vulnerability databases, and permission to push and read images in the workshop registry.
+
 * [Module 05]({{ site.baseurl }}{% link appmod-lab/5-caldova-source-modernization/index.md %}) needs [Python 3.11 or later](https://www.python.org/downloads/windows/) and a local [PostgreSQL 15 or later server](https://www.postgresql.org/download/windows/).
 
 * [Module 06]({{ site.baseurl }}{% link appmod-lab/6-petclinic-aks-automatic/index.md %}) needs [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) with Linux containers, [Docker Compose](https://docs.docker.com/compose/install/) (included with Docker Desktop), the [Java Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack), and a [JDK compatible with the selected PetClinic version](https://adoptium.net/temurin/releases/?os=windows&package=jdk). Check the modernization extension's own JDK requirements too.
@@ -149,30 +153,24 @@ repository, open the cloned folder in VS Code and try again. If the remote point
 somewhere else or there are unrelated changes, stop and use the correct clone.
 Keep this terminal open for the workshop; the lab settings are session variables.
 
-## Get the setup command
+## Download files as you need them
 
-Download the setup script once, check its hash, and read it before running it.
-It downloads only the files for the module you choose; it won't overwrite existing
-files. The script and starter files are checked against the workshop's reviewed
-versions. If a check fails, stop and ask the facilitator for the matching instructions.
+Each module provides direct `Invoke-WebRequest` commands for its starter files.
+Run them from your workshop repository using `$env:LAB_APP_REPO`; the commands
+create the required folders before downloading. No setup script is needed.
 
-```powershell
-$env:LAB_SETUP = Join-Path ([IO.Path]::GetTempPath()) 'appmod-lab-get-files.ps1'
-Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/scripts/get-lab-files.ps1' -OutFile $env:LAB_SETUP
-$expected = '250b6920419840bc8536d5753799b16a0c1963cb3bab4db2dbcafb1f7e076009'
-if ((Get-FileHash -LiteralPath $env:LAB_SETUP -Algorithm SHA256).Hash -ne $expected) {
-    throw 'The setup script does not match these workshop instructions. Do not run it.'
-}
-Get-Content -LiteralPath $env:LAB_SETUP
-```
+Downloads use the current files on the public workshop repository's `main`
+branch without hash verification. Review the files before running them, then
+commit them to record the version used for your workshop.
 
-In each module, run its `& $env:LAB_SETUP -Module ...` command from the root of
-your repository. Review and commit the downloaded files before continuing. The
-setup command never commits or pushes for you. If a download is interrupted, read
-the error and check `git status` before removing any partial files and retrying.
-If you restart PowerShell, open your cloned repository in the new terminal, rerun
-the commands above to set `LAB_APP_REPO`, then repeat the script download and hash
-check. Never record tokens or passwords in your notes.
+`Invoke-WebRequest -OutFile` replaces an existing file. Download each starter
+file only once, and skip downloads for files you have already edited. If a
+download fails, stop, inspect the error and the destination file, then retry
+that download before continuing.
+
+If you restart PowerShell, open your cloned repository in the new terminal and
+rerun the repository commands above to restore `LAB_APP_REPO`. Never record
+tokens or passwords in your notes.
 
 ## Checkpoint
 

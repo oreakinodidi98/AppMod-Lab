@@ -9,7 +9,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
 $baseUrl = 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main'
-$manifestHash = '30bc5d53d0fa3036a94a4106a81026210ad000e38f2d5af97318ea3fcf0ea926'
+$manifestHash = '017a847d2510f5de115f9fd84bd2402fb080a8547092a3a3b8f30dd89e7b2a05'
 $workflowRevision = '58368c8c04f1b9517af8d51fde140d7102069aed'
 $repoRoot = (git rev-parse --show-toplevel).Trim()
 if ((Get-Location).Provider.Name -ne 'FileSystem' -or
@@ -45,7 +45,7 @@ try {
             $source = $_.source
             switch ($Module) {
                 'todo' { $source.StartsWith('assets/src/', [StringComparison]::Ordinal) }
-                'environment' { $source -in @('assets/Python_app/CaldovaClinicalApi/db/init.sql', 'assets/k8s/caldova.yaml', 'assets/scripts/lab-names.ps1') }
+                'environment' { $source -in @('assets/Python_app/CaldovaClinicalApi/db/init.sql', 'assets/k8s/caldova.yaml') }
                 'python' { $source.StartsWith('assets/Python_app/', [StringComparison]::Ordinal) -and $source -ne 'assets/Python_app/CaldovaClinicalApi/db/init.sql' }
                 'java' { $source.StartsWith('assets/Java_app/', [StringComparison]::Ordinal) }
                 'caldova-source' { $source.StartsWith('assets/Scenario1App/', [StringComparison]::Ordinal) }

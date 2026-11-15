@@ -15,12 +15,18 @@ successful Python or Java deployment from
 
 ## 1. Inspect the workload
 
-In the main lab PowerShell terminal, inspect only your workshop namespace:
+In the PowerShell terminal used for module 03, the same settings remain
+available. Confirm the Kubernetes context, then inspect only your workshop
+namespace:
+
+If that terminal was closed, restore the module 03 PowerShell settings from
+`.envrc` first. Do not rerun the resource creation commands.
 
 ```powershell
-kubectl get deployments,pods,services --namespace $env:LAB_NAMESPACE
-kubectl describe "deployment/$($env:LAB_API_NAME)" --namespace $env:LAB_NAMESPACE
-kubectl logs "deployment/$($env:LAB_API_NAME)" --namespace $env:LAB_NAMESPACE --tail=50
+kubectl config current-context
+kubectl get deployments,pods,services --namespace $env:MANAGED_NAMESPACE_NAME
+kubectl describe "deployment/$env:API_NAME" --namespace $env:MANAGED_NAMESPACE_NAME
+kubectl logs "deployment/$env:API_NAME" --namespace $env:MANAGED_NAMESPACE_NAME --tail=50
 ```
 
 Compare the pod status and events with the API's `/live`, `/health`, and
@@ -42,10 +48,10 @@ port forward can still disconnect because it targets an individual pod; this is
 not a high-availability or load test.
 
 ```powershell
-kubectl scale deployment $env:LAB_WEB_NAME --namespace $env:LAB_NAMESPACE --replicas=2
-kubectl rollout status "deployment/$($env:LAB_WEB_NAME)" --namespace $env:LAB_NAMESPACE --timeout=10m
-kubectl get pods --namespace $env:LAB_NAMESPACE `
-    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME"
+kubectl scale deployment $env:WEB_NAME --namespace $env:MANAGED_NAMESPACE_NAME --replicas=2
+kubectl rollout status "deployment/$env:WEB_NAME" --namespace $env:MANAGED_NAMESPACE_NAME --timeout=10m
+kubectl get pods --namespace $env:MANAGED_NAMESPACE_NAME `
+    --selector "app.kubernetes.io/name=$env:WEB_NAME"
 ```
 
 Confirm that two web pods are ready. Copy the name of one of those pods and
@@ -54,8 +60,8 @@ a pod from another application.
 
 ```powershell
 $selectedPod = Read-Host 'Name of the workshop web pod to delete'
-kubectl get pod --namespace $env:LAB_NAMESPACE `
-    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME" `
+kubectl get pod --namespace $env:MANAGED_NAMESPACE_NAME `
+    --selector "app.kubernetes.io/name=$env:WEB_NAME" `
     --field-selector "metadata.name=$selectedPod"
 ```
 
@@ -63,12 +69,12 @@ Confirm that the command lists the selected web pod. If it does not, stop and
 select a pod from the earlier list. Delete only the matching pod:
 
 ```powershell
-kubectl delete pod --namespace $env:LAB_NAMESPACE `
-    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME" `
+kubectl delete pod --namespace $env:MANAGED_NAMESPACE_NAME `
+    --selector "app.kubernetes.io/name=$env:WEB_NAME" `
     --field-selector "metadata.name=$selectedPod"
-kubectl rollout status "deployment/$($env:LAB_WEB_NAME)" --namespace $env:LAB_NAMESPACE --timeout=10m
-kubectl get pods --namespace $env:LAB_NAMESPACE `
-    --selector "app.kubernetes.io/name=$env:LAB_WEB_NAME"
+kubectl rollout status "deployment/$env:WEB_NAME" --namespace $env:MANAGED_NAMESPACE_NAME --timeout=10m
+kubectl get pods --namespace $env:MANAGED_NAMESPACE_NAME `
+    --selector "app.kubernetes.io/name=$env:WEB_NAME"
 ```
 
 Confirm that the deleted pod name is gone, a new pod has appeared, and both
@@ -79,8 +85,8 @@ If replacement fails, inspect events and quota rather than assuming recovery.
 Return the lab to one web replica after the exercise:
 
 ```powershell
-kubectl scale deployment $env:LAB_WEB_NAME --namespace $env:LAB_NAMESPACE --replicas=1
-kubectl rollout status "deployment/$($env:LAB_WEB_NAME)" --namespace $env:LAB_NAMESPACE --timeout=10m
+kubectl scale deployment $env:WEB_NAME --namespace $env:MANAGED_NAMESPACE_NAME --replicas=1
+kubectl rollout status "deployment/$env:WEB_NAME" --namespace $env:MANAGED_NAMESPACE_NAME --timeout=10m
 ```
 
 The manifest also specifies one replica, so reapplying it returns the deployment to

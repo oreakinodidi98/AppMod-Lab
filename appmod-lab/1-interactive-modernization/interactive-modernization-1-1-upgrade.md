@@ -26,11 +26,64 @@ The baseline also separates old problems from new ones. If verification already 
 
 ## 1. Get and run the app
 
-From your repository's default branch, download the todo app using the setup script from [module 00]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}):
+From your repository's default branch, create the folders and download the todo
+app files directly. If you restarted PowerShell, restore `LAB_APP_REPO` using
+[module 00]({{ site.baseurl }}{% link appmod-lab/0-prerequisites/prerequisite-0-1-technical.md %}#create-your-workshop-repository).
+Downloads replace existing files; skip this block if you already have the app,
+especially if you have edited it.
 
 ```powershell
 Set-Location -LiteralPath $env:LAB_APP_REPO
-& $env:LAB_SETUP -Module todo
+New-Item -ItemType Directory -Path `
+  'src\src\main\java\com\example\todo\todo', `
+  'src\src\main\resources\static\css', `
+  'src\src\main\resources\templates', `
+  'src\src\test\java\com\example\todo\todo' `
+  -Force | Out-Null
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/pom.xml' `
+  -OutFile 'src\pom.xml'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/java/com/example/todo/todo/Todo.java' `
+  -OutFile 'src\src\main\java\com\example\todo\todo\Todo.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/java/com/example/todo/todo/TodoController.java' `
+  -OutFile 'src\src\main\java\com\example\todo\todo\TodoController.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/java/com/example/todo/todo/TodoForm.java' `
+  -OutFile 'src\src\main\java\com\example\todo\todo\TodoForm.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/java/com/example/todo/todo/TodoRepository.java' `
+  -OutFile 'src\src\main\java\com\example\todo\todo\TodoRepository.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/java/com/example/todo/TodoApplication.java' `
+  -OutFile 'src\src\main\java\com\example\todo\TodoApplication.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/resources/application.properties' `
+  -OutFile 'src\src\main\resources\application.properties'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/resources/static/css/app.css' `
+  -OutFile 'src\src\main\resources\static\css\app.css'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/main/resources/templates/todos.html' `
+  -OutFile 'src\src\main\resources\templates\todos.html'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/test/java/com/example/todo/todo/TodoControllerTest.java' `
+  -OutFile 'src\src\test\java\com\example\todo\todo\TodoControllerTest.java'
+
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/oreakinodidi98/AppMod-Lab/main/assets/src/src/test/java/com/example/todo/todo/TodoRepositoryTest.java' `
+  -OutFile 'src\src\test\java\com\example\todo\todo\TodoRepositoryTest.java'
 git status --short
 ```
 
